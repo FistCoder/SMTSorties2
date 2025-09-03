@@ -26,7 +26,8 @@
                 {{ form_row(filterForm.isPast) }}
             </div>
 
-            <button type="submit" class="contrast">Rechercher</button>
+            <input type="button" value="Rechercher">
+
             {{ form_end(filterForm) }}
         </div>
 
@@ -56,10 +57,10 @@
                         <td>{{ hangout.campus.name }}</td>
                         <td>{{ hangout.state.label }}</td>
                         <td>{{ hangout.organizer.firstname }}</td>
-                        <td>{{ hangout.organizer.firstname }}</td>
-                        <td><a href="{{ path('hangout_subscribe')  }}"><button>S'inscrire</button></a>
-                            <a href="{{ path('hangout_unsubscribe') }}"><button>Se désister</button></a></td>
-                    </tr>
+                        <td>
+                            <a href="{{ path('hangout_subscribe', {'id': hangout.id}) }}" class="contrast no-underline">S'inscrire</a><br>
+                            <a href="{{ path('hangout_unsubscribe', {'id': hangout.id}) }}" class="contrast no-underline">Se désister</a>
+                        </td>
                 {% endfor %}
             {% endif %}
             </tbody>
