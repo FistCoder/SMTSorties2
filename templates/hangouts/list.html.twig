@@ -1,0 +1,46 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h2>filtre</h2>
+    {{ form_start(filterForm) }}
+    {{ form_row(filterForm.campus) }}
+    {{ form_row(filterForm.name) }}
+    {{ form_row(filterForm.start) }}
+    {{ form_row(filterForm.end) }}
+    {{ form_row(filterForm.state) }}
+    {{  }}
+    <button type="submit">Rechercher</button>
+    {{ form_end(filterForm) }}
+
+    <h2>Résultats des sorties filtrées</h2>
+
+    <table>
+        <thead>
+        <tr>
+            <th>Nom</th>
+            <th>Date de début</th>
+            <th>Campus</th>
+            <th>État</th>
+            <th>Organisateur</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% if hangouts is empty %}
+            <tr>
+                <td colspan="5">Aucune sortie trouvée.</td>
+            </tr>
+        {% else %}
+            {% for hangout in hangouts %}
+                <tr>
+                    <td>{{ hangout.name }}</td>
+                    <td>{{ hangout.startingDateTime|date('d/m/Y H:i') }}</td>
+                    <td>{{ hangout.campus.name }}</td>
+                    <td>{{ hangout.state.label }}</td>
+                    <td>{{ hangout.organizer.username }}</td>
+                </tr>
+            {% endfor %}
+        {% endif %}
+        </tbody>
+    </table>
+
+{% endblock %}
