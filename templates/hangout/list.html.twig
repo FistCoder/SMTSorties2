@@ -1,11 +1,33 @@
 {% extends 'base.html.twig' %}
 
+    {% block stylesheets %}
+        <style>
+            @media only screen and (max-width: 768px) {
+                .mobile-hide {
+                    display: none !important;
+                }
+                table {
+                    font-size: 0.8rem;
+                }
+
+                .grid {
+                    display: block;
+                }
+
+                .checkboxes {
+                    margin-top: 1rem;
+                }
+            }
+        </style>
+    {% endblock %}
+
 {% block body %}
+
     <div>
 
-        <details style="background-color: #e2e2e2; padding: 6px; border-radius: 6px" class="filters accordion">
+        <details style="background-color: #e2e2e2; padding: 6px; border-radius: 6px;" class="mobile-hide filters accordion"  >
             <summary>Filtres</summary>
-            <div style="padding: 6px; border-radius: 6px" >
+            <div style="padding: 6px; border-radius: 6px">
                 {{ form_start(filterForm) }}
                 <div class="grid">
                     <div>
@@ -13,64 +35,65 @@
                         {{ form_row(filterForm.name) }}
                         {{ form_row(filterForm.start) }}
                         {{ form_row(filterForm.end) }}
-                        {{ form_row(filterForm.state) }}
                     </div>
                     <div class="checkboxes">
                         {{ form_row(filterForm.isOrganizer) }}
                         {{ form_row(filterForm.isRegistered) }}
                         {{ form_row(filterForm.isNotRegistered) }}
                         {{ form_row(filterForm.isPast) }}<br>
-                        <button type="submit"  style="width: 40%">Rechercher</button>
+                        <input type="submit" value="Rechercher">
                     </div>
                 </div>
                 {{ form_end(filterForm) }}
             </div>
         </details>
 
-        <div >
+        <div class="mobile-hide">
             <a href="{{ path('hangout_add') }}">
-                <button >Créer une sortie</button>
+                <button>Créer une sortie</button>
             </a>
         </div>
 
-        <h2>Résultats des sorties filtrées</h2>
+        <h2 class="mobile-hide">Résultats des sorties filtrées</h2>
 
-        <table class="striped">
+        <table class="overflow-auto">
             <thead>
             <tr>
                 <th>Nom</th>
                 <th>Date de début</th>
-                <th>Date limite d'inscription</th>
-                <th>nombre de participants</th>
+                <th class="mobile-hide">Date limite d'inscription</th>
+                <th class="mobile-hide">nombre de participants</th>
                 <th>Campus</th>
-                <th>État</th>
-                <th>Inscrit</th>
-                <th>Organisateur</th>
-                <th>Action</th>
+                <th class="mobile-hide">État</th>
+                <th class="mobile-hide">Inscrit</th>
+                <th class="mobile-hide">Organisateur</th>
+                <th class="mobile-hide">Action</th>
             </tr>
             </thead>
             <tbody>
             {% if hangouts is empty %}
                 <tr>
-                    <td colspan="5">Aucune sortie trouvée.</td>
+                    <td colspan="9">Aucune sortie trouvée.</td>
+
                 </tr>
             {% else %}
                 {% for hangout in hangouts %}
-
-                    <tr {% if hangout.state.label is same as('CANCELLED') %} style="background-color: grey" {% endif %}>
-                        <td>{{ hangout.name }}</td>
+                    
+                     <tr {% if hangout.state.label is same as('CANCELLED') %} style="background-color: grey" {% endif %}>
+                        <td><a href="{{ path('hangout_detail', {'id': hangout.id}) }}"
+                               class="contrast no-underline">{{ hangout.name | capitalize }}</a></td>
                         <td>{{ hangout.startingDateTime|date('d/m/Y H:i') }}</td>
-                        <td>{{ hangout.lastSubmitDate|date('d/m/Y H:i') }}</td>
-                        <td>{{ hangout.subscriberLst|length }} / {{ hangout.maxParticipant }}</td>
-                        <td>{{ hangout.campus.name }}</td>
-                        <td>{{ hangout.state.label }}</td>
-                        <td style="color: green"> {% if is_granted('POST_SUBSCRIBED', hangout) %}
+                        <td class="mobile-hide">{{ hangout.lastSubmitDate|date('d/m/Y H:i') }}</td>
+                        <td class="mobile-hide">{{ hangout.subscriberLst|length }} / {{ hangout.maxParticipant }}</td>
+                        <td>{{ hangout.campus.name | capitalize }}</td>
+                        <td class="mobile-hide">{{ hangout.state.label | capitalize }}</td>
+                         <td lass="mobile-hide" style="color: green"> {% if is_granted('POST_SUBSCRIBED', hangout) %}
                                 <b>X</b>
                             {% endif %}
                         </td>
-                        <td>
+                        <td class="mobile-hide">
                             <a href="{{ path('user_detail', {'id': hangout.organizer.id}) }}">{{ hangout.organizer.username }}</a>
-                        </td>
+                        </td>                       
                         <td>
                             {% if is_granted('POST_SUBSCRIBER', hangout) %}
                                 <a href="{{ path('hangout_subscribe', {'id': hangout.id}) }}" class="contrast no-underline">S'inscrire</a><br>
@@ -88,14 +111,28 @@
                             {% if is_granted('POST_PUBLISH', hangout) %}
                                 <a href="{{ path('hangout_publish', {'id': hangout.id}) }}" class="contrast no-underline">Publier</a>
                             {% endif %}
-                        </td>
+                        </td>                   
                     </tr>
-
                 {% endfor %}
             {% endif %}
             </tbody>
         </table>
+        
+        <div class="pagination">
+            {% if currentPage > 1 %}
+                <a href="{{ path('hangout_list', {'page': currentPage - 1}) }}">
+                    <button type="button">Précédent</button>
+                </a>
+            {% endif %}
 
+            <span style="margin: 0 15px;">Page {{ currentPage }} sur {{ maxPages }}</span>
 
+            {% if currentPage < maxPages %}
+                <a href="{{ path('hangout_list', {'page': currentPage + 1}) }}">
+                    <button type="button">Suivant</button>
+                </a>
+            {% endif %}
+        </div>
     </div>
 {% endblock %}
+
