@@ -1,0 +1,49 @@
+{% extends 'base.html.twig' %}
+
+{% block stylesheets %}
+    <style>
+        [role=group] > a {
+            --pico-border-color: 1px !important;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+    <h1 type="title">Liste des lieux :D</h1>
+    <details style="background-color: #e3e3e3; padding: 6px; border-radius: 6px">
+        <summary>Ajouter un lieu</summary>
+    {{ include('places/add.html.twig') }}
+    </details>
+    <table>
+        <thead>
+        <tr>
+            <th>Nom de lieu</th>
+            <th>Rue</th>
+            <th>Coordonées</th>
+            <th>Ville</th>
+            <th>Sorties enregistrées pour ce lieu</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% if places is not null %}
+        {% for place in places %}
+            {% set coords = [place.latitude, place.longitude] %}
+            <tr>
+                <th>
+            {{ place.name }}
+                </th>
+                <td>{{ place.street }}</td>
+                <td>{{ coords|join(', ') }}</td>
+                <td>{{ place.city.name }}</td>
+                <td>{% for hangout in place.hangoutLst %} <a href="{{ path('hangout_detail', {'id': hangout.id}) }}">{{ hangout.name }}</a>{% if not loop.last %}, {% endif %}{% endfor %}</td>
+                <td role="group">
+                    <a type="button" class="secondary" href="{{ path('places_modify', {'id': place.id}) }}">Modifier</a>
+                    <a type="button" class="pico-background-red-450 " href="{{ path('places_delete', {'id': place.id}) }}">Supprimer</a>
+                </td>
+            </tr>
+        {% endfor %}
+        {% endif %}
+        </tbody>
+    </table>
+{% endblock %}

@@ -1,0 +1,60 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <main class="container">
+        <div class="align-content-center">
+            <div>
+                <h1>Annuler une sortie</h1>
+            </div>
+            <hr>
+
+            <section>
+                <div>
+                    <div class="grid">
+                        <span>Nom de la sortie :</span>
+                        <h6>{{ hangout.name}}</h6>
+                    </div>
+
+                    <div class="grid">
+                        <span>Date et heure de la sortie :</span>
+                        <h6>{{ hangout.startingDateTime | date }}</h6>
+                    </div>
+
+                    <div class="grid">
+                        <span>Campus :</span>
+                        <h6>{{ hangout.campus.name }}</h6>
+                    </div>
+
+                    <div class="grid">
+                        <span>Lieu :</span>
+                        <h6>{{ hangout.location.name }}</h6>
+                    </div>
+
+                    <div class="grid">
+                        <span>Motif :</span>
+                        <form action="{{ path('hangout_cancel', {'id': hangout.id}) }}" method="post">
+                            <label>
+                            <input
+                                    type="text" id="cancelMotif" name="cancelMotif">
+                            <button onclick="return confirm('Voulez-vous vraiment annuler la sortie {{ hangout.name }}?')" type="submit">Enregistrer</button>
+                            </label>
+                        </form>
+                            <a onclick href="{{ path('hangout_detail', {'id' : hangout.id}) }}">
+                                <button>Annuler l'annulation</button>
+                            </a>
+
+                    </div>
+                </div>
+
+            </section>
+        </div>
+    </main>
+
+
+
+{% endblock %}
+
+{% block title %}
+
+{% endblock %}
+

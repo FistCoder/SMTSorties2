@@ -1,0 +1,166 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <!-- Page Header -->
+    <div class="page-header">
+        <h1 class="page-title">🏙️ Cities Management</h1>
+        <div class="actions-group">
+            <a href="{{ path('admin_cities_add') }}" role="button">➕ Add New City</a>
+            <a href="{{ path('admin_dashboard') }}" role="button" class="secondary outline">← Back to Dashboard</a>
+        </div>
+    </div>
+
+    <!-- Statistics Info -->
+    <div class="stats-info">
+        <strong>Total Cities: {{ citiesCount }}</strong>
+        <small style="color: var(--muted-color); margin-left: 1rem;">
+            Manage all city locations from this page
+        </small>
+    </div>
+
+    <!-- Cities Table -->
+    <article>
+        <header>
+            <h2>Cities List</h2>
+        </header>
+
+        {% if cities is defined and cities|length > 0 %}
+            <div class="table-container">
+                <table>
+                    <thead>
+                    <tr>
+                        <th scope="col">ID</th>
+                        <th scope="col">City Name</th>
+                        <th scope="col">Postal Code</th>
+                        <th scope="col">Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for city in cities %}
+                        <tr>
+                            <td>{{ city.id }}</td>
+                            <td>
+                                <strong>{{ city.name }}</strong>
+                            </td>
+                            <td>
+                                <code>{{ city.postalCode ?? 'N/A' }}</code>
+                            </td>
+                            <td>
+                                <div class="table-actions">
+                                    <a href="{{ path('admin_cities_modify', {'id': city.id}) }}"
+                                       class="btn-edit"
+                                       title="Edit {{ city.name }}">
+                                        ✏️ Edit
+                                    </a>
+                                    <a href="{{ path('admin_cities_delete', {'id': city.id}) }}"
+                                       class="btn-delete"
+                                       title="Delete {{ city.name }}"
+                                       onclick="return confirm('Are you sure you want to delete {{ city.name }}?')">
+                                        🗑️ Delete
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <!-- Empty State -->
+            <div class="empty-state">
+                <h3>No cities found</h3>
+                <p>You haven't added any cities yet. Start by adding your first city.</p>
+                <a href="{{ path('admin_cities_add') }}" role="button">➕ Add Your First City</a>
+            </div>
+        {% endif %}
+    </article>
+
+    <!-- Additional Actions -->
+    <section style="margin-top: 2rem;">
+    <div class="grid">
+        <a href="{{ path('admin_cities_add') }}" role="button" class="outline">
+            ➕ Add Another City
+        </a>
+        <a href="{{ path('admin_campus_List') }}" role="button" class="secondary outline">
+            🎓 Manage Campus
+        </a>
+        <a href="{{ path('admin_users_List') }}" role="button" class="contrast outline">
+            👥 Manage Users
+        </a>
+    </div>
+{% endblock %}
+{% block stylesheets %}
+        {{ parent() }}
+        <style>
+                .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .page-title {
+            margin: 0;
+            color: var(--primary);
+        }
+
+        .actions-group {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .table-container {
+            overflow-x: auto;
+            margin: 1rem 0;
+        }
+
+        .table-actions {
+            display: flex;
+            gap: 0.5rem;
+            justify-content: center;
+        }
+
+        .table-actions a {
+            padding: 0.25rem 0.5rem;
+            font-size: 0.875rem;
+            text-decoration: none;
+            border-radius: 4px;
+            border: 1px solid;
+        }
+
+        .btn-edit {
+            color: var(--primary);
+            border-color: var(--primary);
+        }
+
+        .btn-edit:hover {
+            background: steelblue;
+            color: white;
+        }
+
+        .btn-delete {
+            color: #dc3545;
+            border-color: #dc3545;
+        }
+
+        .btn-delete:hover {
+            background: #dc3545;
+            color: white;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem 1rem;
+            color: var(--muted-color);
+        }
+
+        .empty-state h3 {
+            color: var(--muted-color);
+            margin-bottom: 1rem;
+        }
+
+</style>
+        {% endblock %}

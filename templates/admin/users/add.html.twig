@@ -1,0 +1,73 @@
+{% extends 'base.html.twig' %}
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .hidden {
+            display: none
+        }
+
+        .active {
+            display: block
+        }
+    </style>
+{% endblock %}
+{% block body %}
+    <section class="grid">
+
+        <div id="inputWrapper" class="grid">
+            <label>
+                Ajouter un utilisateur
+                <input type="radio" id="singleUser" name="userAddType" value="singleUser" checked="checked">
+            </label>
+
+            <label>
+                Fichier .CSV
+                <input type="radio" id="multipleUser" name="userAddType" value="multipleUser">
+            </label>
+        </div>
+        <div></div>
+    </section>
+
+    <div class="" id="singleUserFormWrapper">
+        <h3>Ajouter un utilisateur</h3>
+
+        {{ form(userForm) }}
+    </div>
+    <div class="hidden" id="multipleUserFormWrapper">
+        <form action="{{ path('admin_users_add') }}" enctype="multipart/form-data" method="post">
+            <h3>Ajouter plusieurs utilisateurs</h3>
+            <label>
+                Ajouter le fichier avec les utilisateurs
+            </label>
+            <input type="file" name="csvFile" accept="text/csv">
+            <input type="submit">
+        </form>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script type="text/javascript">
+        document.addEventListener('DOMContentLoaded', () => {
+            let $radioInputs = document.querySelectorAll('input[name="userAddType"]');
+
+            $radioInputs.forEach(input => {
+                input.addEventListener('change', event => {
+                    // Hide all form wrappers first
+                    document.querySelectorAll('[id$="FormWrapper"]').forEach(wrapper => {
+                        wrapper.classList.remove('active');
+                        wrapper.classList.add('hidden');
+                    });
+
+                    // Show the selected one
+                    if (event.target.checked) {
+                        const targetWrapper = document.querySelector('#' + event.target.value + 'FormWrapper');
+                        targetWrapper.classList.add('active');
+                        targetWrapper.classList.remove('hidden');
+                    }
+
+                });
+            });
+        });
+    </script>
+{% endblock %}

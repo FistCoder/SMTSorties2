@@ -1,0 +1,96 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <main class="container">
+        <div class="align-content-center">
+            <div>
+            <span>
+                Nom de la sortie :
+            </span>
+                <h1>{{ hangout.name }}</h1>
+            </div>
+            <hr>
+
+            <section class="grid">
+
+                <div>
+
+                    <div class="grid">
+                        <div>
+                            <span>Date et heure de la sortie :</span>
+                            <h6>{{ hangout.startingDateTime | date }}</h6>
+                        </div>
+
+                        <div>
+                            <span>Date limite d'iscription :</span>
+                            <h6>{{ hangout.lastSubmitDate | date }}</h6>
+                        </div>
+                    </div>
+                    <div class="grid">
+                        <div>
+
+                    <span>
+                    Nr des places :
+                    </span>
+                            <h6>{{ hangout.maxParticipant }}</h6>
+                        </div>
+                        <div>
+                            <span>Durée :</span>
+                            <h6>{{ hangout.length | date('H:i') }}</h6>
+                        </div>
+                    </div>
+                    <div>
+                        <span>Description et infos :</span>
+                        <h6>{{ hangout.detail }}</h6>
+                    </div>
+
+                    <div>
+                    {% if is_granted('POST_EDIT', hangout ) %}
+                        <a href="{{ path('hangout_modify', {'id' : hangout.id}) }}">
+                            <button>Modifier</button>
+                        </a>
+                    {% endif %}
+                    </div>
+
+                </div>
+                <div>
+                    <div class="grid">
+                        <div>
+                            <span>Campus :</span>
+                            <h6>{{ hangout.campus.name }}</h6>
+                        </div>
+                        <div>
+                            <span>Lieu :</span>
+                            <h6>{{ hangout.location.name }}</h6>
+                        </div>
+                    </div>
+                    <div class="grid">
+                        <div>
+                            <span>Rue :</span>
+                            <h6>{{ hangout.location.street }}</h6>
+                        </div>
+                        <div>
+                            <span>Code Postal :</span>
+                            <h6>{{ hangout.location.city.postalCode }}</h6>
+                        </div>
+                    </div>
+                    <div class="grid">
+                        <div>
+                            <span>Latitude :</span>
+                            <h6>{{ hangout.location.latitude }}</h6>
+                        </div>
+                        <div>
+                            <span>Longitude :</span>
+                            <h6>{{ hangout.location.longitude }}</h6>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+{% endblock %}
+
+{% block title %}
+
+{% endblock %}
+

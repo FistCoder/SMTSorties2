@@ -1,0 +1,41 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+
+    <h2>Modification de la sortie {{ hangout.name }}</h2>
+    <h4>CAMPUS : {{ hangout.campus.name }}</h4>
+
+    <div>
+        {{ form_start(formUpdate) }}
+        <div class="grid">
+            <div>
+                {{ form_row(formUpdate.name) }}
+                {{ form_row(formUpdate.startingDateTime) }}
+                {{ form_row(formUpdate.lastSubmitDate) }}
+                {{ form_row(formUpdate.detail) }}
+
+            </div>
+            <div>
+                {{ form_row(formUpdate.maxParticipant) }}
+                {{ form_row(formUpdate.length) }}
+                {{ form_row(formUpdate.location, {'attr': {'class': 'button'}}) }}
+                {#                <p> #}
+                {#                    Latitude: {{ hangout.location.latitude }} <br> #}
+                {#                    Longitude: {{ hangout.location.longitude }} #}
+                {#                </p> #}
+                {{ form_row(formUpdate.save) }}
+                {{ form_row(formUpdate.publish) }}
+                {{ form_row(formUpdate.delete) }}
+                {#                <a href="{{ path('hangout_cancel') }}"><button type="submit">Annuler</button></a> #}
+                {{ form_end(formUpdate) }}
+            </div>
+        </div>
+    </div>
+
+
+{% endblock %}
+
+{% block title %}
+
+{% endblock %}
+

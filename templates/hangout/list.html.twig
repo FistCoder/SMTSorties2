@@ -1,0 +1,102 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div>
+
+        <details style="background-color: #e2e2e2; padding: 6px; border-radius: 6px" class="filters accordion">
+            <summary>Filtres</summary>
+            <div style="padding: 6px; border-radius: 6px" >
+                {{ form_start(filterForm) }}
+                <div class="grid">
+                    <div>
+                        {{ form_row(filterForm.campus) }}
+                        {{ form_row(filterForm.name) }}
+                        {{ form_row(filterForm.start) }}
+                        {{ form_row(filterForm.end) }}
+                        {{ form_row(filterForm.state) }}
+                    </div>
+                    <div class="checkboxes">
+                        {{ form_row(filterForm.isOrganizer) }}
+                        {{ form_row(filterForm.isRegistered) }}
+                        {{ form_row(filterForm.isNotRegistered) }}
+                        {{ form_row(filterForm.isPast) }}<br>
+                        <button type="submit"  style="width: 40%">Rechercher</button>
+                    </div>
+                </div>
+                {{ form_end(filterForm) }}
+            </div>
+        </details>
+
+        <div >
+            <a href="{{ path('hangout_add') }}">
+                <button >Créer une sortie</button>
+            </a>
+        </div>
+
+        <h2>Résultats des sorties filtrées</h2>
+
+        <table class="striped">
+            <thead>
+            <tr>
+                <th>Nom</th>
+                <th>Date de début</th>
+                <th>Date limite d'inscription</th>
+                <th>nombre de participants</th>
+                <th>Campus</th>
+                <th>État</th>
+                <th>Inscrit</th>
+                <th>Organisateur</th>
+                <th>Action</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% if hangouts is empty %}
+            <tr>
+                <td colspan="5">Aucune sortie trouvée.</td>
+            </tr>
+            {% else %}
+                {% for hangout in hangouts %}
+
+            <tr>
+                <td>{{ hangout.name }}</td>
+                <td>{{ hangout.startingDateTime|date('d/m/Y H:i') }}</td>
+                <td>{{ hangout.lastSubmitDate|date('d/m/Y H:i') }}</td>
+                <td>{{ hangout.subscriberLst|length }} / {{ hangout.maxParticipant }}</td>
+                <td>{{ hangout.campus.name }}</td>
+                <td>{{ hangout.state.label }}</td>
+                <td> {% if is_granted('POST_SUBSCRIBED', hangout) %}
+                    X
+                    {% endif %}
+                </td>
+                <td>
+                    <a href="{{ path('user_detail', {'id': hangout.organizer.id}) }}">{{ hangout.organizer.username }}</a>
+                </td>
+                <td>
+                    {% if is_granted('POST_SUBSCRIBER', hangout) %}
+                        <a href="{{ path('hangout_subscribe', {'id': hangout.id}) }}" class="contrast no-underline">S'inscrire</a><br>
+                    {% endif %}
+                    {% if is_granted('POST_UNSUBSCRIBER', hangout) %}
+                        <a href="{{ path('hangout_unsubscribe', {'id': hangout.id}) }}" class="contrast no-underline">Se désister</a>
+                    {% endif %}
+                        <a href="{{ path('hangout_detail', {'id': hangout.id}) }}" class="contrast no-underline">Afficher</a>
+                    {% if is_granted('POST_MODIFY', hangout) %}
+                        <a href="{{ path('hangout_modify', {'id': hangout.id}) }}" class="contrast no-underline">Modifier</a>
+                    {% endif %}
+                    {% if is_granted('POST_CANCEL', hangout) %}
+                        <a href="{{ path('hangout_cancel', {'id': hangout.id}) }}" class="contrast no-underline">Annuler</a>
+                    {% endif %}
+                    {% if is_granted('POST_PUBLISH', hangout) %}
+                        <a href="{{ path('hangout_cancel', {'id': hangout.id}) }}" class="contrast no-underline">Publier</a>
+                            <button onclick="return confirm('Voulez-vous vraiment publier la sortie {{ hangout.name }}?')" type="submit">Enregistrer</button>
+                    {% endif %}
+                </td>
+            </tr>
+
+                {% endfor %}
+                {% endif %}
+            </tbody>
+        </table>
+
+
+    </div>
+{% endblock %}

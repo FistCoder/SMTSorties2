@@ -1,0 +1,13 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+
+{% embed 'views/form/user-form.html.twig' %}
+    {% block formTitle %} Mon profil {% endblock %}
+    {% block buttonLabel %} Enregistrer {% endblock %}
+{% endembed %}
+    <a onclick href="{{ path('hangout_list', {'id' : app.user.id}) }}">
+        <button>Annuler</button>
+    </a>
+{% endblock %}
+

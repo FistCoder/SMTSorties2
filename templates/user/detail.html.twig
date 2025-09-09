@@ -1,0 +1,42 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div class="container-fluid">
+        <h1>Profil de {{ user.username }}</h1>
+        <section class="userBlock">
+        <div class="grid">
+            <div class="userPicture">
+                <img style="width: 200px" src="{{ asset('user/picture/' ~user.userPicture) }}" alt="photo {{ user.username }}">
+            </div>
+            <div>
+                <div class="grid">
+                    <div><strong>Prénom : </strong></div>
+                    <div>{{ user.firstname }}</div>
+                </div>
+                <div class="grid">
+                    <div><strong>Nom : </strong></div>
+                    <div>{{ user.lastname }}</div>
+                </div>
+                <div class="grid">
+                    <div><strong>Téléphone : </strong></div>
+                    <div>{{ user.phone }}</div>
+                </div>
+                <div class="grid">
+                    <div><strong>Email : </strong></div>
+                    <div>{{ user.email }}</div>
+                </div>
+                <div class="grid">
+                    <div><strong>Campus : </strong></div>
+                    <div>{{ user.campus.name }}</div>
+                </div>
+
+            </div>
+        </div>
+        </section>
+
+        <a onclick href="{{ path('hangout_list',  {'id' : user.id}) }}">
+            <button>Retour</button>
+        </a>
+    </div>
+
+{% endblock %}
