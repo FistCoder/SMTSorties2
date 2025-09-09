@@ -51,49 +51,48 @@
             </thead>
             <tbody>
             {% if hangouts is empty %}
-            <tr>
-                <td colspan="5">Aucune sortie trouvée.</td>
-            </tr>
+                <tr>
+                    <td colspan="5">Aucune sortie trouvée.</td>
+                </tr>
             {% else %}
                 {% for hangout in hangouts %}
 
-            <tr>
-                <td>{{ hangout.name }}</td>
-                <td>{{ hangout.startingDateTime|date('d/m/Y H:i') }}</td>
-                <td>{{ hangout.lastSubmitDate|date('d/m/Y H:i') }}</td>
-                <td>{{ hangout.subscriberLst|length }} / {{ hangout.maxParticipant }}</td>
-                <td>{{ hangout.campus.name }}</td>
-                <td>{{ hangout.state.label }}</td>
-                <td> {% if is_granted('POST_SUBSCRIBED', hangout) %}
-                    X
-                    {% endif %}
-                </td>
-                <td>
-                    <a href="{{ path('user_detail', {'id': hangout.organizer.id}) }}">{{ hangout.organizer.username }}</a>
-                </td>
-                <td>
-                    {% if is_granted('POST_SUBSCRIBER', hangout) %}
-                        <a href="{{ path('hangout_subscribe', {'id': hangout.id}) }}" class="contrast no-underline">S'inscrire</a><br>
-                    {% endif %}
-                    {% if is_granted('POST_UNSUBSCRIBER', hangout) %}
-                        <a href="{{ path('hangout_unsubscribe', {'id': hangout.id}) }}" class="contrast no-underline">Se désister</a>
-                    {% endif %}
-                        <a href="{{ path('hangout_detail', {'id': hangout.id}) }}" class="contrast no-underline">Afficher</a>
-                    {% if is_granted('POST_MODIFY', hangout) %}
-                        <a href="{{ path('hangout_modify', {'id': hangout.id}) }}" class="contrast no-underline">Modifier</a>
-                    {% endif %}
-                    {% if is_granted('POST_CANCEL', hangout) %}
-                        <a href="{{ path('hangout_cancel', {'id': hangout.id}) }}" class="contrast no-underline">Annuler</a>
-                    {% endif %}
-                    {% if is_granted('POST_PUBLISH', hangout) %}
-                        <a href="{{ path('hangout_cancel', {'id': hangout.id}) }}" class="contrast no-underline">Publier</a>
-                            <button onclick="return confirm('Voulez-vous vraiment publier la sortie {{ hangout.name }}?')" type="submit">Enregistrer</button>
-                    {% endif %}
-                </td>
-            </tr>
+                    <tr {% if hangout.state.label is same as('CANCELLED') %} style="background-color: grey" {% endif %}>
+                        <td>{{ hangout.name }}</td>
+                        <td>{{ hangout.startingDateTime|date('d/m/Y H:i') }}</td>
+                        <td>{{ hangout.lastSubmitDate|date('d/m/Y H:i') }}</td>
+                        <td>{{ hangout.subscriberLst|length }} / {{ hangout.maxParticipant }}</td>
+                        <td>{{ hangout.campus.name }}</td>
+                        <td>{{ hangout.state.label }}</td>
+                        <td style="color: green"> {% if is_granted('POST_SUBSCRIBED', hangout) %}
+                                <b>X</b>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <a href="{{ path('user_detail', {'id': hangout.organizer.id}) }}">{{ hangout.organizer.username }}</a>
+                        </td>
+                        <td>
+                            {% if is_granted('POST_SUBSCRIBER', hangout) %}
+                                <a href="{{ path('hangout_subscribe', {'id': hangout.id}) }}" class="contrast no-underline">S'inscrire</a><br>
+                            {% endif %}
+                            {% if is_granted('POST_UNSUBSCRIBER', hangout) %}
+                                <a href="{{ path('hangout_unsubscribe', {'id': hangout.id}) }}" class="contrast no-underline">Se désister</a>
+                            {% endif %}
+                            <a href="{{ path('hangout_detail', {'id': hangout.id}) }}" class="contrast no-underline">Afficher</a>
+                            {% if is_granted('POST_MODIFY', hangout) %}
+                                <a href="{{ path('hangout_modify', {'id': hangout.id}) }}" class="contrast no-underline">Modifier</a>
+                            {% endif %}
+                            {% if is_granted('POST_CANCEL', hangout) %}
+                                <a href="{{ path('hangout_cancel', {'id': hangout.id}) }}" class="contrast no-underline">Annuler</a>
+                            {% endif %}
+                            {% if is_granted('POST_PUBLISH', hangout) %}
+                                <a href="{{ path('hangout_publish', {'id': hangout.id}) }}" class="contrast no-underline">Publier</a>
+                            {% endif %}
+                        </td>
+                    </tr>
 
                 {% endfor %}
-                {% endif %}
+            {% endif %}
             </tbody>
         </table>
 
