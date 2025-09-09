@@ -131,10 +131,9 @@ final class HangoutController extends AbstractController
             }
             $hangout->setCampus($user->getCampus());
             $hangout->setOrganizer($user);
-            dump($hangout);
             $this->entityManager->persist($hangout);
             $this->entityManager->flush();
-            $this->addFlash("success", "Sortie " . $hangout->getName() . "ajoutée");
+            $this->addFlash("success", "Sortie " . $hangout->getName() . " ajoutée");
 
             return $this->redirectToRoute('hangout_detail', ['id' => $hangout->getId()]);
         }
@@ -158,7 +157,7 @@ final class HangoutController extends AbstractController
             if ($form->get('delete')->isClicked()) {
                 $this->entityManager->remove($hangout);
                 $this->entityManager->flush();
-                $this->addFlash('success', 'Sortie supprimée avec success');
+                $this->addFlash('success', "Sortie ".$hangout->getName()." supprimée avec success");
                 return $this->redirectToRoute('hangout_list', ['id' => $hangout->getId()]);
             } elseif ($form->get('save')->isClicked()) {
                 $this->entityManager->persist($hangout);
@@ -188,7 +187,6 @@ final class HangoutController extends AbstractController
         }
         if ($hangout->getState()->getLabel()==="CREATE") {
             $hangout->setState($state);
-            $this->addFlash('success', "la sortie ".$hangout->getName()." a été publiée");
         }
 
         $violations = $this->validator->validate($hangout);
@@ -199,8 +197,10 @@ final class HangoutController extends AbstractController
         } else {
             $this->entityManager->persist($hangout);
             $this->entityManager->flush();
+            $this->addFlash('success', "la sortie ".$hangout->getName()." a été publiée");
+            return $this->redirectToRoute('hangout_list');
         }
-        return $this->render('hangout/detail.html.twig', [$hangout->getId()]);
+        return $this->render('hangout/detail.html.twig');
     }
 
 //    #[IsGranted('POST_DELETE', 'hangout')]//c'est les acces grace au voter ca marche pour le bouton de edition
