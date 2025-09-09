@@ -13,6 +13,9 @@
                 href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.colors.min.css"
         >
 
+        <link rel="stylesheet"
+              href="{{ asset('styles/app.css') }}">
+
         {% block stylesheets %}
 
         {% endblock %}
@@ -31,11 +34,9 @@
                 {% include 'views/menu/nav.html.twig' %}
                 {% for label, messages in app.flashes %}
                     {% for message in messages %}
-                        <div class="flash flash-{{ label }}">
-                            <h1>
+                        <h2 class="flash-{{ label }}">
                             {{ message }}
-                            </h1>
-                        </div>
+                        </h2>
                     {% endfor %}
                 {% endfor %}
         </header>

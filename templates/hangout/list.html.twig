@@ -78,7 +78,7 @@
                             {% if is_granted('POST_UNSUBSCRIBER', hangout) %}
                                 <a href="{{ path('hangout_unsubscribe', {'id': hangout.id}) }}" class="contrast no-underline">Se désister</a>
                             {% endif %}
-                            <a href="{{ path('hangout_detail', {'id': hangout.id}) }}" class="contrast no-underline">Afficher</a>
+                                <a href="{{ path('hangout_detail', {'id': hangout.id}) }}" class="contrast no-underline">Afficher</a>
                             {% if is_granted('POST_MODIFY', hangout) %}
                                 <a href="{{ path('hangout_modify', {'id': hangout.id}) }}" class="contrast no-underline">Modifier</a>
                             {% endif %}
