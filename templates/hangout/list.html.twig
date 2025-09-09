@@ -74,12 +74,12 @@
             {% if hangouts is empty %}
                 <tr>
                     <td colspan="9">Aucune sortie trouvée.</td>
+
                 </tr>
             {% else %}
-                {% set currentUser = app.user %}
                 {% for hangout in hangouts %}
-
-                    <tr>
+                    
+                     <tr {% if hangout.state.label is same as('CANCELLED') %} style="background-color: grey" {% endif %}>
                         <td><a href="{{ path('hangout_detail', {'id': hangout.id}) }}"
                                class="contrast no-underline">{{ hangout.name | capitalize }}</a></td>
                         <td>{{ hangout.startingDateTime|date('d/m/Y H:i') }}</td>
@@ -87,29 +87,37 @@
                         <td class="mobile-hide">{{ hangout.subscriberLst|length }} / {{ hangout.maxParticipant }}</td>
                         <td>{{ hangout.campus.name | capitalize }}</td>
                         <td class="mobile-hide">{{ hangout.state.label | capitalize }}</td>
-                        <td class="mobile-hide"> {% if app.user in hangout.subscriberLst %}
-                                X
+                         <td lass="mobile-hide" style="color: green"> {% if is_granted('POST_SUBSCRIBED', hangout) %}
+                                <b>X</b>
                             {% endif %}
                         </td>
-                        <td class="mobile-hide">{{ hangout.organizer.username | capitalize }}</td>
                         <td class="mobile-hide">
-                            <a href="{{ path('hangout_subscribe', {'id': hangout.id}) }}" class="contrast no-underline">S'inscrire</a><br>
-                            <a href="{{ path('hangout_unsubscribe', {'id': hangout.id}) }}"
-                               class="contrast no-underline">Se désister</a>
-                            <a href="{{ path('hangout_detail', {'id': hangout.id}) }}" class="contrast no-underline">Afficher</a>
-                            {% if app.user.id ==  hangout.organizer.id %}
-                                <a href="{{ path('hangout_modify', {'id': hangout.id}) }}"
-                                   class="contrast no-underline">Modifier</a>
-                                <a href="{{ path('hangout_cancel', {'id': hangout.id}) }}"
-                                   class="contrast no-underline">Annuler</a>
+                            <a href="{{ path('user_detail', {'id': hangout.organizer.id}) }}">{{ hangout.organizer.username }}</a>
+                        </td>                       
+                        <td>
+                            {% if is_granted('POST_SUBSCRIBER', hangout) %}
+                                <a href="{{ path('hangout_subscribe', {'id': hangout.id}) }}" class="contrast no-underline">S'inscrire</a><br>
                             {% endif %}
-                        </td>
+                            {% if is_granted('POST_UNSUBSCRIBER', hangout) %}
+                                <a href="{{ path('hangout_unsubscribe', {'id': hangout.id}) }}" class="contrast no-underline">Se désister</a>
+                            {% endif %}
+                                <a href="{{ path('hangout_detail', {'id': hangout.id}) }}" class="contrast no-underline">Afficher</a>
+                            {% if is_granted('POST_MODIFY', hangout) %}
+                                <a href="{{ path('hangout_modify', {'id': hangout.id}) }}" class="contrast no-underline">Modifier</a>
+                            {% endif %}
+                            {% if is_granted('POST_CANCEL', hangout) %}
+                                <a href="{{ path('hangout_cancel', {'id': hangout.id}) }}" class="contrast no-underline">Annuler</a>
+                            {% endif %}
+                            {% if is_granted('POST_PUBLISH', hangout) %}
+                                <a href="{{ path('hangout_publish', {'id': hangout.id}) }}" class="contrast no-underline">Publier</a>
+                            {% endif %}
+                        </td>                   
                     </tr>
-
                 {% endfor %}
             {% endif %}
             </tbody>
         </table>
+        
         <div class="pagination">
             {% if currentPage > 1 %}
                 <a href="{{ path('hangout_list', {'page': currentPage - 1}) }}">

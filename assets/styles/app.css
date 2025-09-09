@@ -9,3 +9,28 @@
 .userBlock{
     width: 100vmax;
 }
+
+
+.flash{
+    padding: 1rem; border-radius: .5rem; margin-bottom: .5rem;
+}
+
+.flash-success{
+    color: forestgreen;
+}
+
+.flash-info{
+    color: royalblue;
+}
+
+.flash-warning{
+    color: orangered
+}
+
+.flash-error{
+    color: red;
+}
+
+.flash-default{
+    color: dimgray;
+}
