@@ -193,14 +193,25 @@ final class AdminController extends AbstractController
     }
 
     #[Route('/users/delete/{id}', name: 'users_delete', requirements: ['id' => '\d+'])]
-    public function deleteUsers(int $id): Response
+    public function deleteUsers(int $id, EntityManagerInterface $entityManager): Response
     {
-        $user = $this->entityManager->getRepository(User::class)->find($id);
+        $user = $entityManager->getRepository(User::class)->find($id);
         if (!$user) {
             throw $this->createNotFoundException();
         }
-        $this->entityManager->remove($user);
-        $this->entityManager->flush();
+
+        $ghostUser = $entityManager->getRepository(User::class)->findOneBy(['username' => 'X']);
+        if (!$ghostUser) {
+            throw new \Exception('Utilisateur fantôme introuvable. Veuillez le créer via les fixtures.');
+        }
+
+        foreach ($user->getOrganizedHangoutLst() as $hangout) {
+            $hangout->setOrganizer($ghostUser);
+        }
+
+        $entityManager->remove($user);
+        $entityManager->flush();
+
         return $this->redirectToRoute('admin_users_list');
     }
 

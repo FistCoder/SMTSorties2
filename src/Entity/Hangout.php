@@ -96,7 +96,7 @@ class Hangout
     private Collection $subscriberLst;
 
     #[ORM\ManyToOne(inversedBy: 'organizedHangoutLst')]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]//permet de passer l'utilisateur en null
     private ?User $organizer = null;
 
     // You might also want to add a custom validation method for complex business rules
