@@ -7,7 +7,12 @@
             <span>
                 Nom de la sortie :
             </span>
-                <h1>{{ hangout.name }}</h1>
+                <h1>{{ hangout.name }}
+                    {% if hangout.state.label is same as('CANCELLED') %}
+                        <br>
+                        <div style="color: red">SORTIE ANNULEE</div>
+                    {% endif %}
+                </h1>
             </div>
             <hr>
 
@@ -41,11 +46,11 @@
                     </div>
                     <div>
                         <span>Description et infos :</span>
-                        <h6>{{ hangout.detail }}</h6>
+                        <h6 {% if hangout.state.label is same as('CANCELLED') %} style="color: red"{% endif %}>{{ hangout.detail }}</h6>
                     </div>
 
                     <div>
-                    {% if is_granted('POST_EDIT', hangout ) %}
+                    {% if is_granted('POST_MODIFY', hangout ) %}
                         <a href="{{ path('hangout_modify', {'id' : hangout.id}) }}">
                             <button>Modifier</button>
                         </a>
@@ -83,6 +88,29 @@
                             <span>Longitude :</span>
                             <h6>{{ hangout.location.longitude }}</h6>
                         </div>
+                    </div>
+                    <h4>Liste des participants inscrits</h4>
+                    <div style="max-height: 200px; max-width: 500px; overflow-y: auto" >
+                        <table class="striped">
+                            <thead>
+                            <tr>
+                                <th>Pseudo</th>
+                                <th>Nom</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {%  for user in hangout.subscriberLst %}
+                                <tr>
+                                    <td>
+                                        {{ user.username }}
+                                    </td>
+                                    <td>
+                                        {{ user.firstname }} {{ user.lastname }}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </section>

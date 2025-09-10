@@ -1,11 +1,39 @@
 {% extends 'base.html.twig' %}
 
+    {% block stylesheets %}
+        {{ parent() }}
+        <style>
+            .btAdd{
+                display: flex;
+                justify-content: flex-end;
+            }
+
+            @media only screen and (max-width: 768px) {
+                .mobile-hide {
+                    display: none !important;
+                }
+                table {
+                    font-size: 0.8rem;
+                }
+
+                .grid {
+                    display: block;
+                }
+
+                .checkboxes {
+                    margin-top: 1rem;
+                }
+            }
+        </style>
+    {% endblock %}
+
 {% block body %}
+
     <div>
 
-        <details style="background-color: #e2e2e2; padding: 6px; border-radius: 6px" class="filters accordion">
+        <details style="background-color: #e2e2e2; padding: 6px; border-radius: 6px;" class="mobile-hide filters accordion"  >
             <summary>Filtres</summary>
-            <div style="padding: 6px; border-radius: 6px" >
+            <div style="padding: 6px; border-radius: 6px">
                 {{ form_start(filterForm) }}
                 <div class="grid">
                     <div>
@@ -19,94 +47,106 @@
                         {{ form_row(filterForm.isRegistered) }}
                         {{ form_row(filterForm.isNotRegistered) }}
                         {{ form_row(filterForm.isPast) }}<br>
-                        <button type="submit"  style="width: 40%">Rechercher</button>
+                        <input type="submit" value="Rechercher">
                     </div>
                 </div>
                 {{ form_end(filterForm) }}
             </div>
         </details>
 
-        <div >
+        <div class="mobile-hide btAdd">
             <a href="{{ path('hangout_add') }}">
-                <button >Créer une sortie</button>
+                <button class="outline">Créer une sortie</button>
             </a>
         </div>
 
-        <h2>Résultats des sorties filtrées</h2>
+        <h2 class="mobile-hide">Résultats des sorties filtrées</h2>
 
-        <table class="striped">
+        <table class="overflow-auto">
             <thead>
             <tr>
                 <th>Nom de la sortie</th>
-                <th>Date de la sortie</th>
-                <th>Clôture</th>
+                <th class="mobile-hide">Date de la sortie</th>
+                <th class="mobile-hide">Clôture</th>
                 <th>Inscrits/Places</th>
-                <th>État</th>
-                <th>Inscrit</th>
-                <th>Organisateur</th>
-                <th>Actions</th>
+                <th class="mobile-hide">État</th>
+                <th class="mobile-hide">Inscrit</th>
+                <th class="mobile-hide">Organisateur</th>
+                <th class="mobile-hide">Actions</th>
             </tr>
             </thead>
             <tbody>
             {% if hangouts is empty %}
-            <tr>
-                <td colspan="5">Aucune sortie trouvée.</td>
-            </tr>
+                <tr>
+                    <td colspan="9">Aucune sortie trouvée.</td>
+
+                </tr>
             {% else %}
                 {% for hangout in hangouts %}
 
-            <tr>
-                <td>{{ hangout.name }}</td>
-                <td>{{ hangout.startingDateTime|date('d M Y') }}</td>
-                <td>{{ hangout.lastSubmitDate|date('d M Y') }}</td>
-                <td>{{ hangout.subscriberLst|length }} / {{ hangout.maxParticipant }}</td>
-                <td>{{ hangout.state.label }}</td>
-                <td style="color: red; text-align: center"> {% if is_granted('POST_SUBSCRIBED', hangout) %}
-                    X
-                    {% endif %}
-                </td>
-                <td>
-                    <a href="{{ path('user_detail', {'id': hangout.organizer.id}) }}">{{ hangout.organizer.username }}</a>
-                </td>
-                <td>
-                    {% set actions = [] %}
+                     <tr {% if hangout.state.label is same as('CANCELLED') %} style="background-color: grey" {% endif %}>
+                        <td><a href="{{ path('hangout_detail', {'id': hangout.id}) }}"
+                               class="contrast no-underline">{{ hangout.name | capitalize }}</a></td>
+                        <td>{{ hangout.startingDateTime|date('d M Y') }}</td>
+                        <td class="mobile-hide">{{ hangout.lastSubmitDate|date('d M Y') }}</td>
+                        <td class="mobile-hide">{{ hangout.subscriberLst|length }} / {{ hangout.maxParticipant }}</td>
+                        <td>{{ hangout.campus.name | capitalize }}</td>
+                        <td class="mobile-hide">{{ hangout.state.label | capitalize }}</td>
+                         <td class="mobile-hide" style="color: green"> {% if is_granted('POST_SUBSCRIBED', hangout) %}
+                                <b>X</b>
+                            {% endif %}
+                        </td>
+                        <td class="mobile-hide">
+                            <a href="{{ path('user_detail', {'id': hangout.organizer.id}) }}">{{ hangout.organizer.username }}</a>
+                        </td>
+                        <td>
+                            {% set actions = [] %}
 
-                    {% if is_granted('POST_SUBSCRIBER', hangout) %}
-                        {% set actions = actions|merge(['<a href="' ~ path('hangout_subscribe', {'id': hangout.id}) ~ '" class="contrast no-underline">S\'inscrire</a>']) %}
-                    {% endif %}
-                    {% if is_granted('POST_UNSUBSCRIBER', hangout) %}
-                        {% set actions = actions|merge(['<a href="' ~ path('hangout_unsubscribe', {'id': hangout.id}) ~ '" class="contrast no-underline">Se désister</a>']) %}
-                    {% endif %}
-                    {% if not is_granted('POST_MODIFY', hangout) %}
-                        {% set actions = actions|merge(['<a href="' ~ path('hangout_detail', {'id': hangout.id}) ~ '" class="contrast no-underline">Afficher</a>']) %}
-                    {% endif %}
-                    {% if is_granted('POST_MODIFY', hangout) %}
-                        {% set actions = actions|merge(['<a href="' ~ path('hangout_modify', {'id': hangout.id}) ~ '" class="contrast no-underline">Modifier</a>']) %}
-                    {% endif %}
-                    {% if is_granted('POST_CANCEL', hangout) %}
-                        {% set actions = actions|merge(['<a href="' ~ path('hangout_cancel', {'id': hangout.id}) ~ '" class="contrast no-underline">Annuler</a>']) %}
-                    {% endif %}
-                    {% if is_granted('POST_PUBLISH', hangout) %}
-                        {% set actions = actions|merge(['<a href="' ~ path('hangout_publish', {'id': hangout.id}) ~ '" class="contrast no-underline">Publier</a>']) %}
-                    {% endif %}
+                            {% if is_granted('POST_SUBSCRIBER', hangout) %}
+                                {% set actions = actions|merge(['<a href="' ~ path('hangout_subscribe', {'id': hangout.id}) ~ '" class="contrast no-underline">S\'inscrire</a>']) %}
+                            {% endif %}
+                            {% if is_granted('POST_UNSUBSCRIBER', hangout) %}
+                                {% set actions = actions|merge(['<a href="' ~ path('hangout_unsubscribe', {'id': hangout.id}) ~ '" class="contrast no-underline">Se désister</a>']) %}
+                            {% endif %}
+                            {% if not is_granted('POST_MODIFY', hangout) %}
+                                {% set actions = actions|merge(['<a href="' ~ path('hangout_detail', {'id': hangout.id}) ~ '" class="contrast no-underline">Afficher</a>']) %}
+                            {% endif %}
+                            {% if is_granted('POST_MODIFY', hangout) %}
+                                {% set actions = actions|merge(['<a href="' ~ path('hangout_modify', {'id': hangout.id}) ~ '" class="contrast no-underline">Modifier</a>']) %}
+                            {% endif %}
+                            {% if is_granted('POST_CANCEL', hangout) %}
+                                {% set actions = actions|merge(['<a href="' ~ path('hangout_cancel', {'id': hangout.id}) ~ '" class="contrast no-underline">Annuler</a>']) %}
+                            {% endif %}
+                            {% if is_granted('POST_PUBLISH', hangout) %}
+                                {% set actions = actions|merge(['<a href="' ~ path('hangout_publish', {'id': hangout.id}) ~ '" class="contrast no-underline">Publier</a>']) %}
+                            {% endif %}
 
-                    {{ actions|join(' - ')|raw }}
-                </td>
-            </tr>
-
+                            {{ actions|join(' - ')|raw }}
+                        </td>
+                    </tr>
                 {% endfor %}
-                {% endif %}
+            {% endif %}
             </tbody>
         </table>
 
+        <div class="pagination">
+            {% if currentPage > 1 %}
+                <a href="{{ path('hangout_list', {'page': currentPage - 1}) }}">
+                    <button type="button">Précédent</button>
+                </a>
+            {% endif %}
 
+            <span style="margin: 0 15px;">Page {{ currentPage }} sur {{ maxPages }}</span>
+
+            {% if currentPage < maxPages %}
+                <a href="{{ path('hangout_list', {'page': currentPage + 1}) }}">
+                    <button type="button" class="outline">Suivant</button>
+                </a>
+            {% endif %}
+        </div>
     </div>
 {% endblock %}
 
 {% block javascripts %}
-    {{ parent() }}
-{% endblock %}
-
-{% block stylesheets %}
     {{ parent() }}
 {% endblock %}

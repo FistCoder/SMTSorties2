@@ -14,7 +14,9 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
+#[isGranted('ROLE_ADMIN')]
 #[Route('/admin', name: 'admin_')]
 final class AdminController extends AbstractController
 
@@ -121,11 +123,11 @@ final class AdminController extends AbstractController
         ]);
     }
 
-    #[Route('/campus/delete/{id}', name: 'campus_delete', requirements: ['id' => '\d+'])]
-    public function deleteCampus(int $id): Response
-    {
-
-    }
+//    #[Route('/campus/delete/{id}', name: 'campus_delete', requirements: ['id' => '\d+'])]
+//    public function deleteCampus(int $id): Response
+//    {
+//
+//    }
 
     #[Route('/campus/modify/{id}', name: 'campus_modify', requirements: ['id' => '\d+'])]
     public function modifyCampus(int $id): Response
@@ -193,9 +195,26 @@ final class AdminController extends AbstractController
     }
 
     #[Route('/users/delete/{id}', name: 'users_delete', requirements: ['id' => '\d+'])]
-    public function deleteUsers(int $id): Response
+    public function deleteUsers(int $id, EntityManagerInterface $entityManager): Response
     {
+        $user = $entityManager->getRepository(User::class)->find($id);
+        if (!$user) {
+            throw $this->createNotFoundException();
+        }
 
+        $ghostUser = $entityManager->getRepository(User::class)->findOneBy(['username' => 'X']);
+        if (!$ghostUser) {
+            throw new \Exception('Utilisateur fantôme introuvable. Veuillez le créer via les fixtures.');
+        }
+
+        foreach ($user->getOrganizedHangoutLst() as $hangout) {
+            $hangout->setOrganizer($ghostUser);
+        }
+
+        $entityManager->remove($user);
+        $entityManager->flush();
+
+        return $this->redirectToRoute('admin_users_list');
     }
 
     #[Route('/users/modify/{id}', name: 'users_modify', requirements: ['id' => '\d+'])]
