@@ -22,11 +22,20 @@ class HangoutType extends AbstractType
     {
         $builder
             ->add('name')
-            ->add('startingDateTime', DateType::class, ['widget' => 'single_text', 'format' => 'yyyy-MM-dd', 'attr' => ['value' => '']])
+            ->add('startingDateTime', DateType::class, ['widget' => 'single_text', 'format' => 'yyyy-MM-dd'])
             ->add('lastSubmitDate', DateType::class, ['widget' => 'single_text', 'format' => 'yyyy-MM-dd'])
-            ->add('length', TimeType::class, ['widget' => 'single_text', 'attr' => ['step' => '900', 'min'=>'00:30', 'max'=>'12:00', 'value'=>'01:00']])
+            ->add('length', TimeType::class, ['widget' => 'single_text', 'attr' => ['step' => '900', 'min' => '00:30', 'max' => '12:00', 'value' => '01:00']])
             ->add('maxParticipant')
-            ->add('detail', TextareaType::class, ['required' => false, 'attr' => ['rows' => '5']])
+            ->add('detail', TextareaType::class, ['required' => false, 'attr' => ['rows' => '2']]);
+
+        if ($options['is_admin']) {
+            $builder->add('campus', EntityType::class, [
+                'class' => Campus::class,
+                'choice_label' => 'name',
+            ]);
+        }
+
+        $builder
             ->add('location', EntityType::class, [
                 'class' => Location::class,
                 'choice_label' => 'name',
@@ -35,15 +44,15 @@ class HangoutType extends AbstractType
                 ['label' => 'Enregistrer'])
             ->add('publish', SubmitType::class,
                 ['label' => 'Publier'])
-            ->add('delete', SubmitType::class,['label' => 'Supprimer'])
-        ;
+            ->add('delete', SubmitType::class,
+                ['label' => 'Supprimer']);
     }
 
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'data_class' => Hangout::class,
-            'invalid_message_parameters' => ['class' => 'error_msg'],
+            'is_admin' => false,
         ]);
     }
 }

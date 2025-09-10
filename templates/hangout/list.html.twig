@@ -87,7 +87,7 @@
                         {% set actions = actions|merge(['<a href="' ~ path('hangout_cancel', {'id': hangout.id}) ~ '" class="contrast no-underline">Annuler</a>']) %}
                     {% endif %}
                     {% if is_granted('POST_PUBLISH', hangout) %}
-                        {% set actions = actions|merge(['<a href="' ~ path('hangout_cancel', {'id': hangout.id}) ~ '" class="contrast no-underline">Publier</a>']) %}
+                        {% set actions = actions|merge(['<a href="' ~ path('hangout_publish', {'id': hangout.id}) ~ '" class="contrast no-underline">Publier</a>']) %}
                     {% endif %}
 
                     {{ actions|join(' - ')|raw }}
@@ -103,25 +103,10 @@
     </div>
 {% endblock %}
 
+{% block javascripts %}
+    {{ parent() }}
+{% endblock %}
+
 {% block stylesheets %}
     {{ parent() }}
-{#    <style>#}
-{#        summary::after {#}
-{#            display: none !important;#}
-{#        }#}
-{#        summary {#}
-{#            color: white !important;#}
-
-{#        }#}
-{#        details a {#}
-{#            color: white !important;#}
-{#        }#}
-
-{#        details {#}
-{#            background-color: #5a5a5a;#}
-{#            color: white !important;#}
-{#            padding: 4px 6px;#}
-{#            border-radius: 4px;#}
-{#        }#}
-{#    </style>#}
 {% endblock %}

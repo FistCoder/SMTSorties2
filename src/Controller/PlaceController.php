@@ -53,10 +53,11 @@ final class PlaceController extends AbstractController
             $this->entityManager->persist($place);
             $this->entityManager->flush();
 
-            return $this->redirectToRoute('hangout_add');
+            $referer = $request->headers->get('referer');
+            return $this->redirect($referer);
         }
 
-        return $this->render('places/add.html.twig',
+        return $this->render('places/list.html.twig',
         ['formPlace' => $form]);
     }
 

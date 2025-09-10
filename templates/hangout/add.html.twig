@@ -1,6 +1,7 @@
 {% extends 'base.html.twig' %}
 
 {% block stylesheets %}
+    {{ parent() }}
     <style>
 
 .modal {
@@ -55,6 +56,21 @@ main ul > li {
 main ul > li::before {
     content: '⚠';
 }
+
+.btn-delete {
+    background: #e74c3c ;
+    border: 1px solid #e74c3c ;
+}
+
+.btn-publish {
+    background: #1b9448 ;
+    border: 1px solid #1b9448 ;
+}
+
+.btn-add-location {
+    background: #5c636a ;
+    border: 1px solid #5c636a;
+}
 </style>
 {% endblock %}
 {% block title %}
@@ -73,6 +89,9 @@ main ul > li::before {
                 {{ form_row(formHangout.detail) }}
             </div>
             <div>
+                {% if is_granted('ROLE_ADMIN', app.user) %}
+                {{ form_row(formHangout.campus) }}
+                {% endif %}
                 {{ form_row(formHangout.length) }}
                 {{ form_row(formHangout.maxParticipant) }}
                 {{ form_label(formHangout.location) }}
@@ -80,12 +99,15 @@ main ul > li::before {
 
                     {{ form_widget(formHangout.location) }}
 
-                    <div type="button" id="showModalBtn" onclick="showModal()">Ajouter un lieu</div>
+                    <div type="button" id="showModalBtn" class="btn-add-location" onclick="showModal()">Ajouter un lieu</div>
                 </div>
 
+                <div class="grid">
+
                 {{ form_row(formHangout.save) }}
-                {{ form_row(formHangout.publish) }}
-                {{ form_row(formHangout.delete) }}
+                {{ form_row(formHangout.publish, {'attr' : {'class':'btn-publish'}}) }}
+                {{ form_row(formHangout.delete, {'attr' : {'class':'btn-delete'}}) }}
+                </div>
 
                 {{ form_end(formHangout) }}
 

@@ -92,7 +92,9 @@ final class HangoutController extends AbstractController
 
         $hangout = new Hangout();
         $place = new Location();
-        $form = $this->createForm(HangoutType::class, $hangout);
+        $form = $this->createForm(HangoutType::class, $hangout, [
+            'is_admin' => $this->isGranted('ROLE_ADMIN'),
+        ]);
 
         $formPlace = $this->createForm(PlaceType::class, $place, [
             'action' => $this->generateUrl('places_add')
@@ -109,9 +111,10 @@ final class HangoutController extends AbstractController
             } elseif ($form->get('publish')->isClicked()) {
                 $hangout->setState($this->stateRepository->findOneBy(['label' => 'OPEN']));
             }
+            if (!$this->isGranted('ROLE_ADMIN')) {
             $hangout->setCampus($user->getCampus());
+            }
             $hangout->setOrganizer($user);
-            dump($hangout);
             $this->entityManager->persist($hangout);
             $this->entityManager->flush();
             $this->addFlash("success", "Sortie " . $hangout->getName() . "ajoutée");
@@ -130,7 +133,15 @@ final class HangoutController extends AbstractController
     public function modifyHangout(Request $request, Hangout $hangout): Response
     {
 
-        $form = $this->createForm(HangoutType::class, $hangout);
+        $place = new Location();
+
+        $form = $this->createForm(HangoutType::class, $hangout, [
+            'is_admin' => $this->isGranted('ROLE_ADMIN'),
+        ]);
+        $formPlace = $this->createForm(PlaceType::class, $place, [
+            'action' => $this->generateUrl('places_add')
+        ]);
+
 
         $form->handleRequest($request);
 
@@ -146,11 +157,19 @@ final class HangoutController extends AbstractController
 
                 $this->addFlash("success", "Sortie mise a jours !");
                 return $this->redirectToRoute('hangout_detail', ['id' => $hangout->getId()]);
+            } elseif ($form->get('publish')->isClicked()) {
+                $hangout->setState($this->stateRepository->findOneBy(['label' => 'OPEN']));
+                $this->entityManager->persist($hangout);
+                $this->entityManager->flush();
+
+                $this->addFlash("success", "Sortie publiée!");
+                return $this->redirectToRoute('hangout_detail', ['id' => $hangout->getId()]);
             }
 
         }
         return $this->render('hangout/modify.html.twig', [
             'formUpdate' => $form,
+            'formPlace' => $formPlace,
             'hangout' => $hangout,
         ]);
     }
@@ -278,7 +297,7 @@ final class HangoutController extends AbstractController
             $this->entityManager->flush();
         }
 
-        return $this->redirectToRoute('hangout_detail', ['id' => $hangout->getId()]);
+        return $this->redirectToRoute('hangout_list');
     }
 
     #[IsGranted('POST_UNSUBSCRIBER', 'hangout')]
