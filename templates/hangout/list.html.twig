@@ -98,7 +98,7 @@
                         <td class="mobile-hide">
                             <a href="{{ path('user_detail', {'id': hangout.organizer.id}) }}">{{ hangout.organizer.username }}</a>
                         </td>
-                        <td>
+                        <td class="mobile-hide">
                             {% set actions = [] %}
 
                             {% if is_granted('POST_SUBSCRIBER', hangout) %}
