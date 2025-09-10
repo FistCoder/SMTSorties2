@@ -121,11 +121,11 @@ final class AdminController extends AbstractController
         ]);
     }
 
-    #[Route('/campus/delete/{id}', name: 'campus_delete', requirements: ['id' => '\d+'])]
-    public function deleteCampus(int $id): Response
-    {
-
-    }
+//    #[Route('/campus/delete/{id}', name: 'campus_delete', requirements: ['id' => '\d+'])]
+//    public function deleteCampus(int $id): Response
+//    {
+//
+//    }
 
     #[Route('/campus/modify/{id}', name: 'campus_modify', requirements: ['id' => '\d+'])]
     public function modifyCampus(int $id): Response
@@ -193,7 +193,13 @@ final class AdminController extends AbstractController
     #[Route('/users/delete/{id}', name: 'users_delete', requirements: ['id' => '\d+'])]
     public function deleteUsers(int $id): Response
     {
-
+        $user = $this->entityManager->getRepository(User::class)->find($id);
+        if (!$user) {
+            throw $this->createNotFoundException();
+        }
+        $this->entityManager->remove($user);
+        $this->entityManager->flush();
+        return $this->redirectToRoute('admin_users_list');
     }
 
     #[Route('/users/modify/{id}', name: 'users_modify', requirements: ['id' => '\d+'])]

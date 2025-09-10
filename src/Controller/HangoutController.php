@@ -69,12 +69,12 @@ final class HangoutController extends AbstractController
         $totalHangout = $this->hangoutRepository->count();
         $maxPages =ceil($totalHangout / Hangout::HANGOUT_PER_PAGE);
 
-//        if ($page < 1) {
-//            return $this->redirectToRoute('hangout_list', ['page' => 1]);
-//        }
-//        if ($page > $maxPages) {
-//            return $this->redirectToRoute('hangout_list', ['page' => $maxPages]);
-//        }
+            if ($page < 1) {
+                return $this->redirectToRoute('hangout_list', ['page' => 1]);
+            }
+            if ($page > $maxPages) {
+                return $this->redirectToRoute('hangout_list', ['page' => $maxPages]);
+            }
 
         return $this->render('hangout/list.html.twig', [
             'hangouts' => $hangouts,
@@ -201,21 +201,6 @@ final class HangoutController extends AbstractController
         return $this->render('hangout/detail.html.twig');
     }
 
-//    #[IsGranted('POST_DELETE', 'hangout')]//c'est les acces grace au voter ca marche pour le bouton de edition
-//    #[Route('/delete/{id}', name: 'delete', requirements: ['id' => '\d+'])]
-//    public function deleteHangout(int $id): Response
-//    {
-//        $hangout = $this->hangoutRepository->find($id);
-//        if (!$hangout) {
-//            throw $this->createNotFoundException("La sortie n'existe pas.");
-//        }
-//
-//        $this->entityManager->remove($hangout);
-//        $this->entityManager->flush();
-//
-//        $this->addFlash('sucess', 'Votre Sortie a bien été suprimmée');
-//        return $this->redirectToRoute('hangout_list');
-//    }
 
     #[ISGranted('POST_CANCEL', 'hangout')]
     #[Route('/cancel/{id}', name: 'cancel', requirements: ['id' => '\d+'])]
