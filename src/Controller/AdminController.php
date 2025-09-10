@@ -121,11 +121,11 @@ final class AdminController extends AbstractController
         ]);
     }
 
-    #[Route('/campus/delete/{id}', name: 'campus_delete', requirements: ['id' => '\d+'])]
-    public function deleteCampus(int $id): Response
-    {
-
-    }
+//    #[Route('/campus/delete/{id}', name: 'campus_delete', requirements: ['id' => '\d+'])]
+//    public function deleteCampus(int $id): Response
+//    {
+//
+//    }
 
     #[Route('/campus/modify/{id}', name: 'campus_modify', requirements: ['id' => '\d+'])]
     public function modifyCampus(int $id): Response
