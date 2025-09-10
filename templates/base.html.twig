@@ -1,217 +1,9 @@
 <!DOCTYPE html>
-<html>
-    <head>
-        <meta charset="UTF-8">
-        <title>{% block title %}Mes Sorties Tops{% endblock %}</title>
-        <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text><text y=%221.3em%22 x=%220.2em%22 font-size=%2276%22 fill=%22%23fff%22>sf</text></svg>">
-        <link
-                rel="stylesheet"
-                href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css"
-        >
-        <link
-                rel="stylesheet"
-                href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.colors.min.css"
-        >
-
-        {% block stylesheets %}
-            <style>
-                /* Toast Container */
-                .toast-container {
-                    position: fixed;
-                    top: 20px;
-                    right: 20px;
-                    z-index: 9999;
-                    display: flex;
-                    flex-direction: column;
-                    gap: 10px;
-                }
-
-                /* Base Toast Styles */
-                .toast {
-                    min-width: 300px;
-                    max-width: 500px;
-                    padding: 16px 20px;
-                    border-radius: 8px;
-                    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-                    display: flex;
-                    align-items: center;
-                    gap: 12px;
-                    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-                    font-size: 14px;
-                    line-height: 1.4;
-                    position: relative;
-                    overflow: hidden;
-                    transform: translateX(100%);
-                    opacity: 0;
-                    animation: slideIn 0.3s ease-out forwards;
-                }
-
-                /* Success Toast */
-                .toast.toast-success {
-                    background-color: #10b981;
-                    color: white;
-                }
-
-                /* Error Toast */
-                .toast.toast-error {
-                    background-color: #ef4444;
-                    color: white;
-                }
-
-                /* Toast Icons */
-                .toast-icon {
-                    flex-shrink: 0;
-                    width: 20px;
-                    height: 20px;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                }
-
-                /* Toast Message */
-                .toast-message {
-                    flex: 1;
-                    margin: 0;
-                    font-weight: 500;
-                }
-
-                /* Close Button */
-                .toast-close {
-                    background: none;
-                    border: none;
-                    color: inherit;
-                    cursor: pointer;
-                    font-size: 18px;
-                    line-height: 1;
-                    padding: 0;
-                    width: 20px;
-                    height: 20px;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    opacity: 0.7;
-                    transition: opacity 0.2s;
-                }
-
-                .toast-close:hover {
-                    opacity: 1;
-                }
-
-                /* Progress Bar */
-                .toast-progress {
-                    position: absolute;
-                    bottom: 0;
-                    left: 0;
-                    height: 3px;
-                    background-color: rgba(255, 255, 255, 0.3);
-                    animation: progress 4s linear forwards;
-                }
-
-                /* Animations */
-                @keyframes slideIn {
-                    to {
-                        transform: translateX(0);
-                        opacity: 1;
-                    }
-                }
-
-                @keyframes slideOut {
-                    to {
-                        transform: translateX(100%);
-                        opacity: 0;
-                    }
-                }
-
-                @keyframes progress {
-                    from {
-                        width: 100%;
-                    }
-                    to {
-                        width: 0%;
-                    }
-                }
-
-                /* Responsive Design */
-                @media (max-width: 640px) {
-                    .toast-container {
-                        left: 20px;
-                        right: 20px;
-                        top: 20px;
-                    }
-
-                    .toast {
-                        min-width: auto;
-                        max-width: none;
-                    }
-                }
-            </style>
-        {% endblock %}
-
-
-        {% block javascripts %}
-            <script>
-                function showToast(type, message) {
-                    const container = document.getElementById('toast-container');
-
-                    // Create toast element
-                    const toast = document.createElement('div');
-                    toast.className = `toast toast-${type}`;
-
-                    // Create icon
-                    const icon = document.createElement('div');
-                    icon.className = 'toast-icon';
-                    icon.innerHTML = type === 'success' ? '✓' : '✕';
-
-                    // Create message
-                    const messageEl = document.createElement('div');
-                    messageEl.className = 'toast-message';
-                    messageEl.textContent = message;
-
-                    // Create close button
-                    const closeBtn = document.createElement('button');
-                    closeBtn.className = 'toast-close';
-                    closeBtn.innerHTML = '×';
-                    closeBtn.onclick = () => removeToast(toast);
-
-                    // Create progress bar
-                    const progress = document.createElement('div');
-                    progress.className = 'toast-progress';
-
-                    // Assemble toast
-                    toast.appendChild(icon);
-                    toast.appendChild(messageEl);
-                    toast.appendChild(closeBtn);
-                    toast.appendChild(progress);
-
-                    // Add to container
-                    container.appendChild(toast);
-
-                    // Auto-remove after 4 seconds
-                    setTimeout(() => {
-                        if (toast.parentNode) {
-                            removeToast(toast);
-                        }
-                    }, 4000);
-                }
-
-                function removeToast(toast) {
-                    toast.style.animation = 'slideOut 0.3s ease-out forwards';
-                    setTimeout(() => {
-                        if (toast.parentNode) {
-                            toast.parentNode.removeChild(toast);
-                        }
-                    }, 300);
-                }
-            </script>
-            {% block importmap %}{{ importmap('app') }}{% endblock %}
-        {% endblock %}
-    </head>
-    <body>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Welcome!{% endblock %}</title>
+    <title>{% block title %}Mes Sorties Top {% endblock %}</title>
     <link rel="icon"
           href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text><text y=%221.3em%22 x=%220.2em%22 font-size=%2276%22 fill=%22%23fff%22>sf</text></svg>">
 
@@ -221,38 +13,227 @@
 
     <!-- Custom CSS -->
     <link rel="stylesheet" href="{{ asset('styles/app.css') }}">
-    {% block stylesheets %}{% endblock %}
+    {% block stylesheets %}
+        <style>
+            /* Toast Container */
+            .toast-container {
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                z-index: 9999;
+                display: flex;
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            /* Base Toast Styles */
+            .toast {
+                min-width: 300px;
+                max-width: 500px;
+                padding: 16px 20px;
+                border-radius: 8px;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+                font-size: 14px;
+                line-height: 1.4;
+                position: relative;
+                overflow: hidden;
+                transform: translateX(100%);
+                opacity: 0;
+                animation: slideIn 0.3s ease-out forwards;
+            }
+
+            /* Success Toast */
+            .toast.toast-success {
+                background-color: #10b981;
+                color: white;
+            }
+
+            /* Error Toast */
+            .toast.toast-error {
+                background-color: #ef4444;
+                color: white;
+            }
+
+            /* Toast Icons */
+            .toast-icon {
+                flex-shrink: 0;
+                width: 20px;
+                height: 20px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            /* Toast Message */
+            .toast-message {
+                flex: 1;
+                margin: 0;
+                font-weight: 500;
+            }
+
+            /* Close Button */
+            .toast-close {
+                background: none;
+                border: none;
+                color: inherit;
+                cursor: pointer;
+                font-size: 18px;
+                line-height: 1;
+                padding: 0;
+                width: 20px;
+                height: 20px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                opacity: 0.7;
+                transition: opacity 0.2s;
+            }
+
+            .toast-close:hover {
+                opacity: 1;
+            }
+
+            /* Progress Bar */
+            .toast-progress {
+                position: absolute;
+                bottom: 0;
+                left: 0;
+                height: 3px;
+                background-color: rgba(255, 255, 255, 0.3);
+                animation: progress 4s linear forwards;
+            }
+
+            /* Animations */
+            @keyframes slideIn {
+                to {
+                    transform: translateX(0);
+                    opacity: 1;
+                }
+            }
+
+            @keyframes slideOut {
+                to {
+                    transform: translateX(100%);
+                    opacity: 0;
+                }
+            }
+
+            @keyframes progress {
+                from {
+                    width: 100%;
+                }
+                to {
+                    width: 0%;
+                }
+            }
+
+            /* Responsive Design */
+            @media (max-width: 640px) {
+                .toast-container {
+                    left: 20px;
+                    right: 20px;
+                    top: 20px;
+                }
+
+                .toast {
+                    min-width: auto;
+                    max-width: none;
+                }
+            }
+        </style>
+    {% endblock %}
 </head>
 
 <body>
-    <div class="container">
-        <header>
-            <div class="header-content">
-                <img src="{{ asset('img/logoMST.png') }}" alt="Logo MST" width="100">
-            </div>
-                {% include 'views/menu/nav.html.twig' %}
-            {# Add the toast container #}
-            <div class="toast-container" id="toast-container"></div>
+<div class="container">
+    <header>
+        <div class="header-content">
+            <img src="{{ asset('img/logoMST.png') }}" alt="Logo MST" width="100">
+        </div>
+        {% include 'views/menu/nav.html.twig' %}
+        {# Add the toast container #}
+        <div class="toast-container" id="toast-container"></div>
 
-            {# Replace your current flash message loop with this #}
-            {% for label, messages in app.flashes %}
-                {% for message in messages %}
-                    <script>
-                        document.addEventListener('DOMContentLoaded', function() {
-                            showToast('{{ label }}', '{{ message|escape('js') }}');
-                        });
-                    </script>
-                {% endfor %}
+        {# Replace your current flash message loop with this #}
+        {% for label, messages in app.flashes %}
+            {% for message in messages %}
+                <script>
+                    document.addEventListener('DOMContentLoaded', function () {
+                        showToast('{{ label }}', '{{ message|escape('js') }}');
+                    });
+                </script>
             {% endfor %}
-        </header>
+        {% endfor %}
+    </header>
 
-        <main>
-            {% block body %}{% endblock %}
-        </main>
+    <main>
+        {% block body %}{% endblock %}
+    </main>
 
-        <footer>
-            {% block footer %}{% endblock %}
-        </footer>
-    </div>
-    </body>
+    <footer>
+        {% block footer %}{% endblock %}
+    </footer>
+</div>
+</body>
+{% block javascripts %}
+    <script>
+        function showToast(type, message) {
+            const container = document.getElementById('toast-container');
+
+            // Create toast element
+            const toast = document.createElement('div');
+            toast.className = `toast toast-${type}`;
+
+            // Create icon
+            const icon = document.createElement('div');
+            icon.className = 'toast-icon';
+            icon.innerHTML = type === 'success' ? '✓' : '✕';
+
+            // Create message
+            const messageEl = document.createElement('div');
+            messageEl.className = 'toast-message';
+            messageEl.textContent = message;
+
+            // Create close button
+            const closeBtn = document.createElement('button');
+            closeBtn.className = 'toast-close';
+            closeBtn.innerHTML = '×';
+            closeBtn.onclick = () => removeToast(toast);
+
+            // Create progress bar
+            const progress = document.createElement('div');
+            progress.className = 'toast-progress';
+
+            // Assemble toast
+            toast.appendChild(icon);
+            toast.appendChild(messageEl);
+            toast.appendChild(closeBtn);
+            toast.appendChild(progress);
+
+            // Add to container
+            container.appendChild(toast);
+
+            // Auto-remove after 4 seconds
+            setTimeout(() => {
+                if (toast.parentNode) {
+                    removeToast(toast);
+                }
+            }, 4000);
+        }
+
+        function removeToast(toast) {
+            toast.style.animation = 'slideOut 0.3s ease-out forwards';
+            setTimeout(() => {
+                if (toast.parentNode) {
+                    toast.parentNode.removeChild(toast);
+                }
+            }, 300);
+        }
+    </script>
+    {% block importmap %}{{ importmap('app') }}{% endblock %}
+{% endblock %}
 </html>

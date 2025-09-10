@@ -40,8 +40,8 @@ final class HangoutController extends AbstractController
     }
 
 
-    #[Route('/', name: 'list')]
-    public function listHangouts(Request $request): Response
+    #[Route('/{page}', name: 'list', requirements: ['page'=>'\d+'])]
+    public function listHangouts(Request $request, int $page = 1): Response
     {
 
         /**
@@ -263,7 +263,7 @@ final class HangoutController extends AbstractController
 
     #[isGranted('POST_SUBSCRIBER', 'hangout')]
     #[Route('/subscribe/{id}', name: 'subscribe', requirements: ['id' => '\d+'])]
-    public function subscribeToHangout(int $id): Response
+    public function subscribeToHangout(int $id, Hangout $hangout): Response
     {
         $hangout = $this->hangoutRepository->find($id);
         /**
