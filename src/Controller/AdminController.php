@@ -154,6 +154,7 @@ final class AdminController extends AbstractController
             $user->setActive('false');
             $this->entityManager->persist($user);
             $this->entityManager->flush();
+            $this->redirectToRoute('admin_users_list');
         }
 
         if ($request->files->get('csvFile')) {
@@ -182,6 +183,7 @@ final class AdminController extends AbstractController
                     $i++;
                 }
                 $this->entityManager->flush();
+                $this->redirectToRoute('admin_users_list');
             }
 
         }

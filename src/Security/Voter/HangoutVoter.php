@@ -96,7 +96,7 @@ final class HangoutVoter extends Voter
                     || $this->security->isGranted('ROLE_ADMIN'));
 
             case self::PUBLISH:
-                return ($subject->getState()->getLabel() === "CREATE" &&  $subject->getLastSubmitDate()< $dateNow && $user===$subject->getOrganizer());
+                return ($subject->getState()->getLabel() === "CREATE" &&  $subject->getLastSubmitDate()> $dateNow && $user===$subject->getOrganizer());
 
         }
         return false;

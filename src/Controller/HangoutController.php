@@ -49,35 +49,15 @@ final class HangoutController extends AbstractController
          * @var User $user
          */
         $user = $this->getUser();
-
         $filtersModel = new FiltresModel();//permet de mapper les données directement atravers le model
-
         if (!$user) {
             // Gère le cas utilisateur non connecté (redirige, exception, etc.)
             throw $this->createAccessDeniedException('Vous devez être connecté');
         }
-
-
-//creation du form - et je lui passe le model
         $filterForm = $this->createForm(FilterHangoutType::class, $filtersModel);
         $filterForm->handleRequest($request);
 
-
-//recuperation des donées du formulaire de filtres remplis et ajout de ces données dans le tableau de filtre qui seras envoyer au repository
-        $hangouts = [];
-
-        //if ($filterForm->isSubmitted() && $filterForm->isValid()) {
-            //$filters = $filterForm->getData();
-
             $hangouts = $this->hangoutRepository->findFilteredEvent($user, $filtersModel);
-//            return $this->render('hangout/list.html.twig', [
-//                'hangouts' => $hangouts,
-//                'filterForm' => $filterForm
-//            ]);
-//        } else {
-//            // Par défaut (pas de filtre), recupère tout ou selon ta logique
-//            $hangouts = $this->hangoutRepository->findFilteredEvent($user, new FiltresModel());
-//        }
 
 
         return $this->render('hangout/list.html.twig', [
