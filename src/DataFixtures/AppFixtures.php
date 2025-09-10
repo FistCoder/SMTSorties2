@@ -42,6 +42,7 @@ class AppFixtures extends Fixture
         $campuses = $campusRepository->findAll();
         $hangoutRepository = $manager->getRepository(Hangout::class);
         $hangouts = $hangoutRepository->findAll();
+
         $user = new User();
         $user ->setUsername('user35')
             ->setFirstname('user')
@@ -76,6 +77,20 @@ class AppFixtures extends Fixture
             ->setActive(true)
             ->setCampus($faker->randomElement($campuses));
          $manager->persist($admin);
+
+        $ghostUser = new User();
+        $ghostUser
+            ->setUsername('X')
+            ->setFirstname('Ghost')
+            ->setLastname('User')
+            ->setEmail('ghostadmin@admin.com')
+            ->setPassword($this->userPasswordHasher->hashPassword($user, 'admin'))
+            ->setPhone('0123456789')
+            ->setActive(true)
+            ->setCampus($faker->randomElement($campuses));
+
+        $manager->persist($ghostUser);
+
 
 
 //        for ($i = 0; $i < 10; $i++) {
