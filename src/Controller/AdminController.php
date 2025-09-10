@@ -193,7 +193,13 @@ final class AdminController extends AbstractController
     #[Route('/users/delete/{id}', name: 'users_delete', requirements: ['id' => '\d+'])]
     public function deleteUsers(int $id): Response
     {
-
+        $user = $this->entityManager->getRepository(User::class)->find($id);
+        if (!$user) {
+            throw $this->createNotFoundException();
+        }
+        $this->entityManager->remove($user);
+        $this->entityManager->flush();
+        return $this->redirectToRoute('admin_users_list');
     }
 
     #[Route('/users/modify/{id}', name: 'users_modify', requirements: ['id' => '\d+'])]

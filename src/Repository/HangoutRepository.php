@@ -56,7 +56,7 @@ class HangoutRepository extends ServiceEntityRepository
             ->addOrderBy('h.startingDateTime', 'ASC');
 
         // Filtrage fixe : ne récupérer que les sorties dont l'état fait partie des 4 autorisés
-        $allowedStatuses = ['open', 'create', 'closed', 'in process', 'cancelled'];
+        $allowedStatuses = ['open', 'create', 'closed', 'in process', 'cancelled', 'finished'];
         $qb->andWhere('state.label IN (:allowedStatuses)')
             ->setParameter('allowedStatuses', $allowedStatuses);
 

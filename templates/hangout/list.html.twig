@@ -2,6 +2,11 @@
 
     {% block stylesheets %}
         <style>
+            .btAdd{
+                display: flex;
+                justify-content: flex-end;
+            }
+
             @media only screen and (max-width: 768px) {
                 .mobile-hide {
                     display: none !important;
@@ -48,9 +53,9 @@
             </div>
         </details>
 
-        <div class="mobile-hide">
+        <div class="mobile-hide btAdd">
             <a href="{{ path('hangout_add') }}">
-                <button>Créer une sortie</button>
+                <button class="outline">Créer une sortie</button>
             </a>
         </div>
 
@@ -78,7 +83,7 @@
                 </tr>
             {% else %}
                 {% for hangout in hangouts %}
-                    
+
                      <tr {% if hangout.state.label is same as('CANCELLED') %} style="background-color: grey" {% endif %}>
                         <td><a href="{{ path('hangout_detail', {'id': hangout.id}) }}"
                                class="contrast no-underline">{{ hangout.name | capitalize }}</a></td>
@@ -87,13 +92,13 @@
                         <td class="mobile-hide">{{ hangout.subscriberLst|length }} / {{ hangout.maxParticipant }}</td>
                         <td>{{ hangout.campus.name | capitalize }}</td>
                         <td class="mobile-hide">{{ hangout.state.label | capitalize }}</td>
-                         <td lass="mobile-hide" style="color: green"> {% if is_granted('POST_SUBSCRIBED', hangout) %}
+                         <td class="mobile-hide" style="color: green"> {% if is_granted('POST_SUBSCRIBED', hangout) %}
                                 <b>X</b>
                             {% endif %}
                         </td>
                         <td class="mobile-hide">
                             <a href="{{ path('user_detail', {'id': hangout.organizer.id}) }}">{{ hangout.organizer.username }}</a>
-                        </td>                       
+                        </td>
                         <td>
                             {% if is_granted('POST_SUBSCRIBER', hangout) %}
                                 <a href="{{ path('hangout_subscribe', {'id': hangout.id}) }}" class="contrast no-underline">S'inscrire</a><br>
@@ -111,13 +116,13 @@
                             {% if is_granted('POST_PUBLISH', hangout) %}
                                 <a href="{{ path('hangout_publish', {'id': hangout.id}) }}" class="contrast no-underline">Publier</a>
                             {% endif %}
-                        </td>                   
+                        </td>
                     </tr>
                 {% endfor %}
             {% endif %}
             </tbody>
         </table>
-        
+
         <div class="pagination">
             {% if currentPage > 1 %}
                 <a href="{{ path('hangout_list', {'page': currentPage - 1}) }}">
@@ -129,7 +134,7 @@
 
             {% if currentPage < maxPages %}
                 <a href="{{ path('hangout_list', {'page': currentPage + 1}) }}">
-                    <button type="button">Suivant</button>
+                    <button type="button" class="outline">Suivant</button>
                 </a>
             {% endif %}
         </div>
