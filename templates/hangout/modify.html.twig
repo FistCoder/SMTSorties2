@@ -19,14 +19,14 @@
                 {{ form_row(formUpdate.maxParticipant) }}
                 {{ form_row(formUpdate.length) }}
                 {{ form_label(formUpdate.location) }}
-                <div class="grid">
+                <div class="grid" style="grid-template-columns: 2fr 1fr">
 
                     {{ form_widget(formUpdate.location) }}
 
                     <div type="button" id="showModalBtn" class="btn-add-location" >Ajouter un lieu</div>
                 </div>
-                <div class="grid">
-                {{ form_row(formUpdate.save) }}
+                <div class="grid" style="grid-template-columns: repeat(3, 1fr)">
+                {{ form_row(formUpdate.save, {'attr' : {'class' : 'hidden'}}) }}
                 {{ form_row(formUpdate.publish, {'attr' : {'class':'btn-publish'}}) }}
                 {{ form_row(formUpdate.delete, {'attr' : {'class':'btn-delete'}}) }}
                 </div>
