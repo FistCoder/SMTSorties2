@@ -76,7 +76,7 @@ class AppFixtures extends Fixture
             ->setPhone('0123456789')
             ->setActive(true)
             ->setCampus($faker->randomElement($campuses));
-         $manager->persist($admin);
+         $manager->persist($util);
 
         $ghostUser = new User();
         $ghostUser
@@ -93,18 +93,21 @@ class AppFixtures extends Fixture
 
 
 
-//        for ($i = 0; $i < 10; $i++) {
-//            $fakeUser = new User();
-//            $fakeUser->setUsername('user' . $i)
-//                ->setFirstname($faker->firstName)
-//                ->setLastname($faker->lastName)
-//                ->setEmail($faker->email)
-//                ->setPassword($this->userPasswordHasher->hashPassword($user, $faker->password))
-//                ->setPhone($faker->phoneNumber)
-//                ->setActive($faker->randomElement([true, false]))
-//                ->setCampus($faker->randomElement($campuses));
-//            $manager->persist($fakeUser);
-//        }
+        for ($i = 0; $i < 3; $i++) {
+            $fakeUser = new User();
+
+            $lastName = $faker->lastName();
+            $fakeUser
+                ->setLastname($lastName)
+                ->setUsername($lastName.'ou')
+                ->setFirstname($faker->firstName)
+                ->setEmail($faker->email)
+                ->setPassword($this->userPasswordHasher->hashPassword($user, $faker->password))
+                ->setPhone($faker->phoneNumber)
+                ->setActive($faker->randomElement([true, false]))
+                ->setCampus($faker->randomElement($campuses));
+            $manager->persist($fakeUser);
+        }
         $manager->flush();
     }
 
@@ -112,9 +115,13 @@ class AppFixtures extends Fixture
     {
         $faker = Factory::create('fr_FR');
 
-        for ($i = 0; $i <= 2; $i++) {
+        $cityRepository = $manager->getRepository(City::class);
+        $cities = $cityRepository->findAll();
+
+        foreach ($cities as $city) {
             $campus = new Campus();
-            $campus->setName($faker->city . '_Campus');
+            $campus->setName($city->getName(). '_Campus');
+
             $manager->persist($campus);
         }
         $manager->flush();
@@ -122,12 +129,15 @@ class AppFixtures extends Fixture
 
     public function addCities(ObjectManager $manager): void
     {
+
         $faker = Factory::create('fr_FR');
 
-        for ($i = 0; $i <= 10; $i++) {
+        $ville=['Brest', 'Strasbourg', 'Portoveccio'];
+
+        for ($i = 0; $i <= 2; $i++) {
             $city = new City();
-            $city->setName($faker->city)
-                ->setPostalCode($faker->postcode);
+            $city->setName($ville[$i])
+                 ->setPostalCode($faker->postcode);
             $manager->persist($city);
         }
         $manager->flush();
@@ -149,15 +159,35 @@ class AppFixtures extends Fixture
 
         $faker = Factory::create('fr_FR');
 
+        $sorties = [
+            "Danse de forêt",
+            "Ramassage de cailloux",
+            "Sortie plage",
+            "Bowling",
+            "Billard",
+            "Soirée bar",
+            "Balade en ville",
+            "Cinéma",
+            "Restaurant",
+            "Concert",
+            "Randonnée"
+        ];
 
 
-        for ($i = 0; $i <= 10; $i++) {
+
+        for ($i = 0; $i <= 20; $i++) {
+
+            $startingDateTime = $faker->dateTimeBetween('+2 days', '+2 months');
+            $lenght = \DateTime::createFromFormat('H:i:s', $faker->time('H:i:s','05:00:00'));
+
+
             $hangout = new Hangout();
-            $hangout->setName($faker->firstName.'_Hangout')
+            $hangout
+                ->setName($faker->randomElement($sorties))
                 ->setDetail($faker->paragraph)
-                ->setMaxParticipant($faker->randomNumber(2))
-                ->setLength($faker->dateTime("now"))
-                ->setStartingDateTime($faker->dateTimeBetween('now', '+2 month'))
+                ->setMaxParticipant($faker->numberBetween(3,15))
+                ->setLength($lenght)
+                ->setStartingDateTime($startingDateTime)
                 ->setState($faker->randomElement($states))
                 ->setLocation($faker->randomElement($locations))
                 ->setCampus($faker->randomElement($campuses))
@@ -165,7 +195,11 @@ class AppFixtures extends Fixture
                 ->addSubscriberLst($faker->randomElement($users))
                 ->addSubscriberLst($faker->randomElement($users));
 
-            $hangout->setLastSubmitDate($faker->dateTimeBetween( '-1 months',$hangout->getStartingDateTime()));
+            $lastSubmitDate = clone $startingDateTime;
+            $lastSubmitDate->modify('-1 day');
+
+            $hangout->setLastSubmitDate(clone $lastSubmitDate->modify('-1 day'));
+
             $manager->persist($hangout);
         }
         $manager->flush();

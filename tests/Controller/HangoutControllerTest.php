@@ -21,7 +21,7 @@ final class HangoutControllerTest extends WebTestCase
     public function testIndex(): void
     {
         $client = self::createClient();
-        $client->request('GET', '/hangout');
+        $client->request('GET', '/hangouts');
 
         self::assertResponseIsSuccessful();
     }
@@ -29,6 +29,7 @@ final class HangoutControllerTest extends WebTestCase
     public function testDetailHangout(): void
     {
         $client = self::createClient();
+
         $user = static::getContainer()->get(UserRepository::class)->findOneBy(['email'=>'user@user.com']);
 
         $client->loginUser($user);
@@ -47,6 +48,8 @@ final class HangoutControllerTest extends WebTestCase
         $client->request('GET', '/hangouts/add');
 
 
+
+
         $client->submitForm('Enregistrer', [
             'hangout[name]'=>'toto',
             'hangout[startingDateTime]'=>'2025-10-05',
@@ -59,5 +62,6 @@ final class HangoutControllerTest extends WebTestCase
         $this->assertResponseRedirects();
         $client->followRedirect();
         $this->assertSelectorTextContains('body', 'toto');
+
     }
 }
