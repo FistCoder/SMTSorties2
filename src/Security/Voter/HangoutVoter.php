@@ -76,7 +76,7 @@ final class HangoutVoter extends Voter
                 return ($subject->getState()->getLabel() === ("OPEN") && !$subject->getSubscriberLst()->contains($user));
 
             case self::UNSUBSCRIBER:
-                return ($subject->getState()->getLabel() ===("OPEN") && $subject->getSubscriberLst()->contains($user));
+                return (in_array($subject->getState()->getLabel(), ["CLOSED", "OPEN"], true) && $subject->getSubscriberLst()->contains($user));
 
             case self::SUBSCRIBED:
                 //dd($subject->getSubscriberLst()->contains($user));
@@ -86,14 +86,13 @@ final class HangoutVoter extends Voter
                 return($user===$subject->getOrganizer());
 
             case self::MODIFY:
-                return ($user === $subject->getOrganizer() && $subject->getState()->getLabel()==="CREATE" || $this->security->isGranted('ROLE_ADMIN'));
+                return ($user === $subject->getOrganizer() && $subject->getState()->getLabel()==="CREATE" || $this->security->isGranted('ROLE_ADMIN') && in_array( $subject->getState()->getLabel(), ["CLOSED", "OPEN"], true));
 
             case self::CANCEL:
-
                 return
                     (($user=== $subject->getOrganizer()
                         && in_array( $subject->getState()->getLabel(), ["CLOSED", "OPEN"], true))
-                    || $this->security->isGranted('ROLE_ADMIN'));
+                    || $this->security->isGranted('ROLE_ADMIN')) && in_array( $subject->getState()->getLabel(), ["CLOSED", "OPEN"], true);
 
             case self::PUBLISH:
                 return ($subject->getState()->getLabel() === "CREATE" &&  $subject->getLastSubmitDate()> $dateNow && $user===$subject->getOrganizer());
