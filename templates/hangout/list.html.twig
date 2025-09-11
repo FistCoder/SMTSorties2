@@ -91,7 +91,6 @@
                         <td class="mobile-hide">{{ hangout.lastSubmitDate|date('d M Y') }}</td>
                         <td class="mobile-hide">{{ hangout.subscriberLst|length }} / {{ hangout.maxParticipant }}</td>
 
-                        <td>{{ hangout.campus.name | capitalize }}</td>
                         <td class="mobile-hide" {% if hangout.state.label|upper is same as('CANCELLED') %} style="color: red;" {% endif %}>{{ hangout.state.label | capitalize }}</td>
 
                          <td class="mobile-hide" style="color: green"> {% if is_granted('POST_SUBSCRIBED', hangout) %}
