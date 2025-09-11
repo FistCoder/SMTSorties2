@@ -27,7 +27,7 @@
     color: orangered
 }
 
-.flash-error{
+.flash-error, .flash-danger{
     color: red;
 }
 

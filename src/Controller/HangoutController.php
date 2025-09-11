@@ -40,7 +40,7 @@ final class HangoutController extends AbstractController
     }
 
 
-    #[Route('/{page}', name: 'list', requirements: ['page' => '\d+'])]
+    #[Route('/{page}', name: 'list', requirements: ['page'=>'\d+'])]
     public function listHangouts(Request $request, int $page = 1): Response
     {
 
@@ -48,12 +48,10 @@ final class HangoutController extends AbstractController
          * @var User $user
          */
         $user = $this->getUser();
-
         $filtersModel = new FiltresModel();//permet de mapper les données directement atravers le model
-
         if (!$user) {
             // Gère le cas utilisateur non connecté (redirige, exception, etc.)
-            throw $this->createAccessDeniedException('Vous devez être connecté!');
+            throw $this->createAccessDeniedException('Vous devez être connecté');
         }
 
 
@@ -110,7 +108,9 @@ final class HangoutController extends AbstractController
 
         $hangout = new Hangout();
         $place = new Location();
-        $form = $this->createForm(HangoutType::class, $hangout);
+        $form = $this->createForm(HangoutType::class, $hangout, [
+            'is_admin' => $this->isGranted('ROLE_ADMIN'),
+        ]);
 
         $formPlace = $this->createForm(PlaceType::class, $place, [
             'action' => $this->generateUrl('places_add')
@@ -127,7 +127,9 @@ final class HangoutController extends AbstractController
             } elseif ($form->get('publish')->isClicked()) {
                 $hangout->setState($this->stateRepository->findOneBy(['label' => 'OPEN']));
             }
+            if (!$this->isGranted('ROLE_ADMIN')) {
             $hangout->setCampus($user->getCampus());
+            }
             $hangout->setOrganizer($user);
             $this->entityManager->persist($hangout);
             $this->entityManager->flush();
@@ -142,12 +144,20 @@ final class HangoutController extends AbstractController
         ]);
     }
 
-    #[IsGranted('POST_EDIT', 'hangout')]
+    #[IsGranted('POST_MODIFY', 'hangout')]
     #[Route('/modify/{id}', name: 'modify', requirements: ['id' => '\d+'])]
     public function modifyHangout(Request $request, Hangout $hangout): Response
     {
 
-        $form = $this->createForm(HangoutType::class, $hangout);
+        $place = new Location();
+
+        $form = $this->createForm(HangoutType::class, $hangout, [
+            'is_admin' => $this->isGranted('ROLE_ADMIN'),
+        ]);
+        $formPlace = $this->createForm(PlaceType::class, $place, [
+            'action' => $this->generateUrl('places_add')
+        ]);
+
 
         $form->handleRequest($request);
 
@@ -163,11 +173,19 @@ final class HangoutController extends AbstractController
 
                 $this->addFlash("success", "Sortie mise a jours !");
                 return $this->redirectToRoute('hangout_detail', ['id' => $hangout->getId()]);
+            } elseif ($form->get('publish')->isClicked()) {
+                $hangout->setState($this->stateRepository->findOneBy(['label' => 'OPEN']));
+                $this->entityManager->persist($hangout);
+                $this->entityManager->flush();
+
+                $this->addFlash("success", "Sortie publiée!");
+                return $this->redirectToRoute('hangout_detail', ['id' => $hangout->getId()]);
             }
 
         }
         return $this->render('hangout/modify.html.twig', [
             'formUpdate' => $form,
+            'formPlace' => $formPlace,
             'hangout' => $hangout,
         ]);
     }
@@ -198,7 +216,7 @@ final class HangoutController extends AbstractController
             $this->addFlash('success', "la sortie ".$hangout->getName()." a été publiée");
             return $this->redirectToRoute('hangout_list');
         }
-        return $this->render('hangout/detail.html.twig');
+        return $this->render('hangout/detail.html.twig', [$hangout->getId()]);
     }
 
 
@@ -207,6 +225,7 @@ final class HangoutController extends AbstractController
     public function cancelHangout(
         int                    $id,
         Request                $request,
+        Hangout $hangout,
         EntityManagerInterface $entityManager,
         HangoutRepository      $hangoutRepository,
         StateRepository        $stateRepository
@@ -215,7 +234,6 @@ final class HangoutController extends AbstractController
         $hangout = $hangoutRepository->find($id);
         $state = $stateRepository->findOneBy(['label' => 'CANCELLED']);
         $dateNow = new DateTimeImmutable();
-        dump($dateNow);
 
         if (!$hangout) {
             throw $this->createNotFoundException("Hangout not found");
@@ -246,7 +264,9 @@ final class HangoutController extends AbstractController
 
     #[isGranted('POST_SUBSCRIBER', 'hangout')]
     #[Route('/subscribe/{id}', name: 'subscribe', requirements: ['id' => '\d+'])]
-    public function subscribeToHangout(int $id): Response
+
+    public function subscribeToHangout(int $id, Hangout $hangout): Response
+
     {
         $hangout = $this->hangoutRepository->find($id);
         /**
@@ -281,7 +301,7 @@ final class HangoutController extends AbstractController
             $this->entityManager->flush();
         }
 
-        return $this->redirectToRoute('hangout_detail', ['id' => $hangout->getId()]);
+        return $this->redirectToRoute('hangout_list');
     }
 
     #[IsGranted('POST_UNSUBSCRIBER', 'hangout')]
@@ -296,6 +316,8 @@ final class HangoutController extends AbstractController
          */
         $user = $this->getUser();
         $hangout = $this->hangoutRepository->find($id);
+        $dateNow = new DateTimeImmutable();
+
         if (!$hangout) {
             throw $this->createNotFoundException("La sortie n'existe pas.");
         }
@@ -304,15 +326,9 @@ final class HangoutController extends AbstractController
             $hangout->removeSubscriberLst($user);
         }
 
-        if ($hangout->getSubscriberLst()->count() != $hangout->getMaxParticipant()) {
+        if ($hangout->getSubscriberLst()->count() < $hangout->getMaxParticipant() && $hangout->getLastSubmitDate() > $dateNow) {
             $hangout->setState($this->stateRepository->findOneBy(['label' => 'OPEN']));
-        }
 
-        $violations = $this->validator->validate($hangout);
-        if (count($violations) > 0) {
-            foreach ($violations as $violation) {
-                $this->addFlash('danger', $violation->getMessage());
-            }
         } else {
             $this->addFlash('success', "Désistement avec success.");
             $this->entityManager->persist($hangout);

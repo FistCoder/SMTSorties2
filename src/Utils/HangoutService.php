@@ -26,6 +26,7 @@ class HangoutService
         $hangoutList = $this->hangoutRepository->findAll();
         $stateList = $this->stateRepository->findAll();
 
+
         foreach ($stateList as $state) {
             $states[$state->getLabel()] = $state;
         }
@@ -45,17 +46,25 @@ class HangoutService
 
             } else {
 
-                if ($hangout->getLastSubmitDate() < $dateNow or $hangout->getSubscriberLst()->count() >= $hangout->getMaxParticipant()) {
-                    $hangout->setState($states['CLOSED']);
+                if ($hangout->getState()->getLabel()=== 'OPEN'){
+                    if($hangout->getLastSubmitDate() < $dateNow && $hangout->getSubscriberLst()->count() >= $hangout->getMaxParticipant()) {
+                        $hangout->setState($states['CLOSED']);
+                    }
                 }
-                if ($hangout->getStartingDateTime() < $dateNow) {
-                    $hangout->setState($states['IN_PROCESS']);
+                if ($hangout->getState()->getLabel()=== 'CLOSED'){
+                    if ($hangout->getStartingDateTime() < $dateNow) {
+                        $hangout->setState($states['IN_PROCESS']);
+                    }
                 }
-                if ($dateEnd->modify('+' .$totalMinutes. 'minutes')< $dateNow) {
-                    $hangout->setState($states['FINISHED']);
+                if ($hangout->getState()->getLabel()=== 'IN_PROCESS'){
+                    if($dateEnd->modify('+' .$totalMinutes. 'minutes')< $dateNow) {
+                        $hangout->setState($states['FINISHED']);
+                    }
+                    }
                 }
-                if ($dateEnd->modify('+' .$totalMinutes. 'minutes + 1 month') < $dateNow) {
-                    $hangout->setState($states['ARCHIVED']);
+                if ($hangout->getState()->getLabel()=== 'FINISHED'){
+                    if($dateEnd->modify('+' .$totalMinutes. 'minutes + 1 month') < $dateNow){
+                        $hangout->setState($states['ARCHIVED']);
                 }
             }
             $this->entityManager->persist($hangout);

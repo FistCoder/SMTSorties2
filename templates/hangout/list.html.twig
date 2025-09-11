@@ -1,6 +1,7 @@
 {% extends 'base.html.twig' %}
 
     {% block stylesheets %}
+        {{ parent() }}
         <style>
             .btAdd{
                 display: flex;
@@ -64,15 +65,14 @@
         <table class="overflow-auto">
             <thead>
             <tr>
-                <th>Nom</th>
-                <th>Date de début</th>
-                <th class="mobile-hide">Date limite d'inscription</th>
-                <th class="mobile-hide">nombre de participants</th>
-                <th>Campus</th>
+                <th>Nom de la sortie</th>
+                <th class="mobile-hide">Date de la sortie</th>
+                <th class="mobile-hide">Clôture</th>
+                <th>Inscrits/Places</th>
                 <th class="mobile-hide">État</th>
                 <th class="mobile-hide">Inscrit</th>
                 <th class="mobile-hide">Organisateur</th>
-                <th class="mobile-hide">Action</th>
+                <th class="mobile-hide">Actions</th>
             </tr>
             </thead>
             <tbody>
@@ -84,14 +84,15 @@
             {% else %}
                 {% for hangout in hangouts %}
 
-                     <tr {% if hangout.state.label is same as('CANCELLED') %} style="background-color: grey" {% endif %}>
+                     <tr>
                         <td><a href="{{ path('hangout_detail', {'id': hangout.id}) }}"
                                class="contrast no-underline">{{ hangout.name | capitalize }}</a></td>
-                        <td>{{ hangout.startingDateTime|date('d/m/Y H:i') }}</td>
-                        <td class="mobile-hide">{{ hangout.lastSubmitDate|date('d/m/Y H:i') }}</td>
+                        <td>{{ hangout.startingDateTime|date('d M Y') }}</td>
+                        <td class="mobile-hide">{{ hangout.lastSubmitDate|date('d M Y') }}</td>
                         <td class="mobile-hide">{{ hangout.subscriberLst|length }} / {{ hangout.maxParticipant }}</td>
-                        <td>{{ hangout.campus.name | capitalize }}</td>
-                        <td class="mobile-hide">{{ hangout.state.label | capitalize }}</td>
+
+                        <td class="mobile-hide" {% if hangout.state.label|upper is same as('CANCELLED') %} style="color: red;" {% endif %}>{{ hangout.state.label | capitalize }}</td>
+
                          <td class="mobile-hide" style="color: green"> {% if is_granted('POST_SUBSCRIBED', hangout) %}
                                 <b>X</b>
                             {% endif %}
@@ -99,23 +100,29 @@
                         <td class="mobile-hide">
                             <a href="{{ path('user_detail', {'id': hangout.organizer.id}) }}">{{ hangout.organizer.username }}</a>
                         </td>
-                        <td>
+                        <td class="mobile-hide">
+                            {% set actions = [] %}
+
                             {% if is_granted('POST_SUBSCRIBER', hangout) %}
-                                <a href="{{ path('hangout_subscribe', {'id': hangout.id}) }}" class="contrast no-underline">S'inscrire</a><br>
+                                {% set actions = actions|merge(['<a href="' ~ path('hangout_subscribe', {'id': hangout.id}) ~ '" class="contrast no-underline">S\'inscrire</a>']) %}
                             {% endif %}
                             {% if is_granted('POST_UNSUBSCRIBER', hangout) %}
-                                <a href="{{ path('hangout_unsubscribe', {'id': hangout.id}) }}" class="contrast no-underline">Se désister</a>
+                                {% set actions = actions|merge(['<a href="' ~ path('hangout_unsubscribe', {'id': hangout.id}) ~ '" class="contrast no-underline">Se désister</a>']) %}
                             {% endif %}
-                                <a href="{{ path('hangout_detail', {'id': hangout.id}) }}" class="contrast no-underline">Afficher</a>
+                            {% if not is_granted('POST_MODIFY', hangout) %}
+                                {% set actions = actions|merge(['<a href="' ~ path('hangout_detail', {'id': hangout.id}) ~ '" class="contrast no-underline">Afficher</a>']) %}
+                            {% endif %}
                             {% if is_granted('POST_MODIFY', hangout) %}
-                                <a href="{{ path('hangout_modify', {'id': hangout.id}) }}" class="contrast no-underline">Modifier</a>
+                                {% set actions = actions|merge(['<a href="' ~ path('hangout_modify', {'id': hangout.id}) ~ '" class="contrast no-underline">Modifier</a>']) %}
                             {% endif %}
                             {% if is_granted('POST_CANCEL', hangout) %}
-                                <a href="{{ path('hangout_cancel', {'id': hangout.id}) }}" class="contrast no-underline">Annuler</a>
+                                {% set actions = actions|merge(['<a href="' ~ path('hangout_cancel', {'id': hangout.id}) ~ '" class="contrast no-underline">Annuler</a>']) %}
                             {% endif %}
                             {% if is_granted('POST_PUBLISH', hangout) %}
-                                <a href="{{ path('hangout_publish', {'id': hangout.id}) }}" class="contrast no-underline">Publier</a>
+                                {% set actions = actions|merge(['<a href="' ~ path('hangout_publish', {'id': hangout.id}) ~ '" class="contrast no-underline">Publier</a>']) %}
                             {% endif %}
+                            {{ actions|join(' - ')|raw }}
+
                         </td>
                     </tr>
                 {% endfor %}
@@ -141,3 +148,6 @@
     </div>
 {% endblock %}
 
+{% block javascripts %}
+    {{ parent() }}
+{% endblock %}

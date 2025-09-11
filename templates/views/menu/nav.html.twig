@@ -10,5 +10,7 @@
             <li><a href="{{ path('app_logout') }}">Se déconnecter</a></li>
         {% endif %}
     </ul>
-
+    {% if app.user %}
+        <p>Bonjour {{ app.user.username }}</p>
+    {% endif %}
 </nav>
