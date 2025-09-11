@@ -1,6 +1,7 @@
 {% extends 'base.html.twig' %}
 
 {% block stylesheets %}
+    {{ parent() }}
     <style>
 
 .modal {
@@ -40,29 +41,87 @@
     font-size: 1.5rem;
     cursor: pointer;
 }
+
+main ul {
+
+    border-radius: 4px;
+    border: 1px solid #9e473b;
+    padding: 4px 6px ;
+}
+main ul > li {
+    color: #9e473b;
+    list-style: none;
+
+}
+main ul > li::before {
+    content: '⚠';
+}
+
+.btn-delete {
+    background: #e74c3c ;
+    border: 1px solid #e74c3c ;
+}
+
+.btn-publish {
+    background: #1b9448 ;
+    border: 1px solid #1b9448 ;
+}
+
+.btn-add-location {
+    background: #5c636a ;
+    border: 1px solid #5c636a;
+}
 </style>
 {% endblock %}
-{% block body %}
-    <main class="container">
-        {{ form_start(formHangout) }}
-        {{ form_widget(formHangout) }}
-        {#        <input type="submit" name="action" value="save"> #}
-        {#        <input type="submit" name="action" value="publish"> #}
-        {{ form_end(formHangout) }}
-        <button id="showModalBtn" onclick="showModal()">Ajouter un lieu</button>
-
-        <div id="placeModal" class="modal">
-            <div class="modal-content">
-                <button class="modal-close" type="button">&times;</button>
-                {{ include('places/add.html.twig') }}
-            </div>
-        </div>
-
-    </main>
-
-{% endblock %}
-
 {% block title %}
+    Ajouter une sortie |
+    {{ parent() }}
+{% endblock %}
+{% block body %}
+    <div class="container">
+        <h2>Ajouter une sortie!</h2>
+        <section class="grid">
+            <div>
+                {{ form_start(formHangout) }}
+                {{ form_row(formHangout.name) }}
+                {{ form_row(formHangout.startingDateTime) }}
+                {{ form_row(formHangout.lastSubmitDate) }}
+                {{ form_row(formHangout.detail) }}
+            </div>
+            <div>
+                {% if is_granted('ROLE_ADMIN', app.user) %}
+                {{ form_row(formHangout.campus) }}
+                {% endif %}
+                {{ form_row(formHangout.length) }}
+                {{ form_row(formHangout.maxParticipant) }}
+                {{ form_label(formHangout.location) }}
+                <div class="grid">
+
+                    {{ form_widget(formHangout.location) }}
+
+                    <div type="button" id="showModalBtn" class="btn-add-location" onclick="showModal()">Ajouter un lieu</div>
+                </div>
+
+                <div class="grid">
+
+                {{ form_row(formHangout.save) }}
+                {{ form_row(formHangout.publish, {'attr' : {'class':'btn-publish'}}) }}
+                {{ form_row(formHangout.delete, {'attr' : {'class':'btn-delete'}}) }}
+                </div>
+
+                {{ form_end(formHangout) }}
+
+                <div id="placeModal" class="modal">
+                    <div class="modal-content">
+                        <button class="modal-close" type="button">&times;</button>
+                        {{ include('places/add.html.twig') }}
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+    </div>
 
 {% endblock %}
 

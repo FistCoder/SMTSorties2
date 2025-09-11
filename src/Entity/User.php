@@ -67,7 +67,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @var Collection<int, Hangout>
      */
-    #[ORM\OneToMany(targetEntity: Hangout::class, mappedBy: 'organizer', orphanRemoval: true)]
+    #[ORM\OneToMany(targetEntity: Hangout::class, mappedBy: 'organizer')]
     private Collection $organizedHangoutLst;
 
     #[Assert\NotBlank(message: 'username is required')]

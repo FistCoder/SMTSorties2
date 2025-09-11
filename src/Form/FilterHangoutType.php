@@ -44,12 +44,6 @@ class FilterHangoutType extends AbstractType
                 'required' => false,
                 'label' => 'et',
             ])
-            ->add('state', EntityType::class, [
-                'class' => State::class,
-                'choice_label' => 'label',
-                'placeholder' => 'Tous les états',
-                'required' => false,
-            ])
             ->add('isOrganizer', CheckboxType::class, [
                 'required' => false,
                 'label' => 'Sorties dont je suis l\'organisateur/trice',
