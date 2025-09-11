@@ -1,13 +1,23 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-
-{% embed 'views/form/user-form.html.twig' %}
-    {% block formTitle %} Mon profil {% endblock %}
-    {% block buttonLabel %} Enregistrer {% endblock %}
-{% endembed %}
-    <a onclick href="{{ path('hangout_list', {'id' : app.user.id}) }}">
-        <button>Annuler</button>
-    </a>
+    <div class="grid">
+        <div class="userPicture" class="grid">
+            {% if app.user.userPicture is null %}
+                <img style="width: 200px" src="{{ asset('img/placeholderUser.jpg') }}" alt="photo {{ app.user.username }}">
+            {% else %}
+                <img style="width: 200px" src="{{ asset('user/picture/' ~app.user.userPicture) }}" alt="photo {{ app.user.username }}">
+            {% endif %}
+        </div>
+        <div>
+            {% embed 'views/form/user-form.html.twig' %}
+                {% block formTitle %} Mon profil {% endblock %}
+                {% block buttonLabel %} Enregistrer {% endblock %}
+            {% endembed %}
+            <a onclick href="{{ path('hangout_list', {'id' : app.user.id}) }}">
+                <button>Annuler</button>
+            </a>
+        </div>
+    </div>
 {% endblock %}
 

@@ -225,6 +225,7 @@ final class HangoutController extends AbstractController
     public function cancelHangout(
         int                    $id,
         Request                $request,
+        Hangout $hangout,
         EntityManagerInterface $entityManager,
         HangoutRepository      $hangoutRepository,
         StateRepository        $stateRepository
@@ -263,7 +264,9 @@ final class HangoutController extends AbstractController
 
     #[isGranted('POST_SUBSCRIBER', 'hangout')]
     #[Route('/subscribe/{id}', name: 'subscribe', requirements: ['id' => '\d+'])]
+
     public function subscribeToHangout(int $id, Hangout $hangout): Response
+
     {
         $hangout = $this->hangoutRepository->find($id);
         /**
@@ -313,6 +316,8 @@ final class HangoutController extends AbstractController
          */
         $user = $this->getUser();
         $hangout = $this->hangoutRepository->find($id);
+        $dateNow = new DateTimeImmutable();
+
         if (!$hangout) {
             throw $this->createNotFoundException("La sortie n'existe pas.");
         }
@@ -321,15 +326,9 @@ final class HangoutController extends AbstractController
             $hangout->removeSubscriberLst($user);
         }
 
-        if ($hangout->getSubscriberLst()->count() != $hangout->getMaxParticipant()) {
+        if ($hangout->getSubscriberLst()->count() < $hangout->getMaxParticipant() && $hangout->getLastSubmitDate() > $dateNow) {
             $hangout->setState($this->stateRepository->findOneBy(['label' => 'OPEN']));
-        }
 
-        $violations = $this->validator->validate($hangout);
-        if (count($violations) > 0) {
-            foreach ($violations as $violation) {
-                $this->addFlash('danger', $violation->getMessage());
-            }
         } else {
             $this->addFlash('success', "Désistement avec success.");
             $this->entityManager->persist($hangout);

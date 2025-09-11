@@ -5,8 +5,12 @@
         <h1>Profil de {{ user.username }}</h1>
         <section class="userBlock">
         <div class="grid">
-            <div class="userPicture">
-                <img style="width: 200px" src="{{ asset('user/picture/' ~user.userPicture) }}" alt="photo {{ user.username }}">
+            <div class="userPicture" >
+                {% if user.userPicture is null %}
+                    <img style="width: 200px" src="{{ asset('img/placeholderUser.jpg') }}" alt="photo {{ user.username }}">
+                {% else %}
+                    <img style="width: 200px" src="{{ asset('user/picture/' ~user.userPicture) }}" alt="photo {{ user.username }}">
+                {% endif %}
             </div>
             <div>
                 <div class="grid">
