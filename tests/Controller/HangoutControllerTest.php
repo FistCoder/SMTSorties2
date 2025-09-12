@@ -2,6 +2,7 @@
 
 namespace App\Tests\Controller;
 
+use App\Repository\HangoutRepository;
 use App\Repository\UserRepository;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
@@ -59,6 +60,8 @@ final class HangoutControllerTest extends WebTestCase
             'hangout[detail]'=>'pas de détail',
             'hangout[location]'=>'84'
         ]);
+        $hangout = HangoutControllerTest::getContainer()->get(HangoutRepository::class)->findOneBy(['name' => 'toto']);
+        $this->assertNotEmpty($hangout);
         $this->assertResponseRedirects();
         $client->followRedirect();
         $this->assertSelectorTextContains('body', 'toto');
